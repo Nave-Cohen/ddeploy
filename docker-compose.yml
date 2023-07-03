@@ -37,11 +37,11 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    build: ./app
+    build: .
     restart: unless-stopped
     ports:
       - 3000:3000
-    env_file: ./.env
+    env_file: .env
     environment:
       - MYSQL_HOST=database
 
