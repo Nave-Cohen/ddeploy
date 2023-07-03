@@ -1,0 +1,44 @@
+{
+  "name": "project-web",
+  "version": "1.0.0",
+  "decription": "",
+  "main": "app.js",
+  "author": "Nave-Cohen <nave.cohen@e.braude.ac.il>",
+  "license": "MIT",
+  "scripts": {
+    "start": "npm run scss & node app.js",
+    "scss": "node-sass --include-path scss views/scss/style.scss  -o public/css",
+    "dev": "npm run scss & nodemon app.js",
+    "lint": "npx eslint .",
+    "test": "mocha --recursive --reporter spec --exit",
+    "build-db": "node configs/buildDB.config.js"
+  },
+  "repository": {
+    "url": "https://github.com/Nave-Cohen/Web-Project.git"
+  },
+  "dependencies": {
+    "bootstrap": "^5.2.3",
+    "dotenv": "^16.1.3",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-mysql-session": "^3.0.0",
+    "express-session": "^1.17.3",
+    "mysql2": "^3.3.2",
+    "node-sass": "^9.0.0",
+    "nodemon": "^2.0.22"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "dotenv-cli": "^7.2.1",
+    "eslint": "^8.42.0",
+    "mocha": "^10.2.0",
+    "prettier": "^2.8.8",
+    "supertest": "^6.3.3"
+  },
+  "nodemonConfig": {
+    "ext": "ejs,scss,js",
+    "events": {
+      "restart": "npm run scss & echo Server restarted due to changes"
+    }
+  }
+}

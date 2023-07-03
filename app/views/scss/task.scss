@@ -1,0 +1,51 @@
+.accordion {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10%;
+}
+
+[class*="accordion-item-"] {
+  width: 80%;
+  margin: 20px 10px;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8.3px);
+  -webkit-backdrop-filter: blur(8.3px);
+  border-radius: 10px;
+}
+
+.accordion-button {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 10px;
+}
+
+.accordion-button:focus,
+button:focus:not(:focus-visible),
+button:focus-visible {
+  z-index: 3;
+}
+.dropdown-menu.show{
+  display: flex;
+}
+.card-text {
+  max-height: 150px;
+  margin: 5px 10px;
+}
+.footer {
+  margin: 0 10px;
+  padding-bottom: 10px;
+}
+
+@keyframes items {
+  from {
+    margin: 0;
+    opacity: 0;
+  }
+  to {
+    margin: 20px 10px;
+    opacity: 1;
+  }
+}

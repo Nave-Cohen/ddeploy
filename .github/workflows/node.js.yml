@@ -1,0 +1,46 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Tests
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  build-node:
+    runs-on: ubuntu-latest
+    env:
+      MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_USER: ${{ secrets.MYSQL_USER }}
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+      JWTTOKEN: ${{ secrets.JWTTOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Set up MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+      - name: build db
+        run: |
+          export MYSQL_PWD=${{ env.MYSQL_PASSWORD }}
+          mysql -h ${{ env.MYSQL_HOST }} -u ${{ env.MYSQL_USER }} < $GITHUB_WORKSPACE/configs/init.sql
+      - name: Run scss
+        run: npm run scss
+      - name: Run tests
+        run: npm test
