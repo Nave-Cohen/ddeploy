@@ -40,6 +40,8 @@ jobs:
         run: |
           export MYSQL_PWD=${{ env.MYSQL_PASSWORD }}
           mysql -h ${{ env.MYSQL_HOST }} -u ${{ env.MYSQL_USER }} < $GITHUB_WORKSPACE/configs/init.sql
+      - name: CD into taskify folder
+      - run: cd taskify
       - name: Run scss
         run: npm run scss
       - name: Run tests
