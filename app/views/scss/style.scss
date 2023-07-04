@@ -1,0 +1,16 @@
+$primary: rgb(88, 53, 154) !default;
+
+@import './variables.scss';
+@import '../../node_modules/bootstrap/scss/bootstrap';
+@import './index';
+@import './toast';
+@import './task';
+@import './sidebar';
+@import './modal';
+
+
+/*
+@import "https://fonts.googleapis.com/css?family=Raleway:100,300,400|Roboto+Condensed:300,700&display=swap";
+@import "../../node_modules/@fortawesome/fontawesome-free/scss/regular.scss";
+@import "../../node_modules/@fortawesome/fontawesome-free/scss/solid.scss";
+ */

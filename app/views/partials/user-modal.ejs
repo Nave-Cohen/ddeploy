@@ -1,0 +1,68 @@
+<div
+  class="modal"
+  id="userModal"
+  tabindex="-1"
+  aria-labelledby="ModalLabel"
+  aria-hidden="true"
+>
+<div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-user">Edit Profile</h5>
+        <button
+          id="close-user-modal-btn"
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <label for="username" class="form-label">User name:</label>
+        <input class="form-control mb-3" id="username" value="<%= user.name %>">
+        <label for="email" class="form-label">Email:</label>
+        <input class="form-control mb-3" id="email" value="<%= user.email %>">
+        
+        <div class="form-check mb-2">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="changePasswordCheckbox"
+          />
+          <label class="form-check-label" for="changePasswordCheckbox">
+            Change Password
+          </label>
+        </div>
+        <div id="passwordSection" style="display: none">
+          <div class="form-group mb-2">
+            <label for="password">New Password:</label>
+            <input type="password" class="form-control" id="password" />
+          </div>
+          <div class="form-group">
+            <label for="repeatPassword">Repeat New Password:</label>
+            <input type="password" class="form-control" id="repeatPassword" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div
+        id="alert-user-msg"
+        class="alert alert-danger d-none"
+        style="width: 100%; padding: 5px"
+        role="alert"
+        ></div>
+        <div
+        class="btn-footer d-flex justify-content-between align-items-center"
+        style="width: 100%"
+        >
+        <small id="user-edited" class="text-muted"></small>
+        <button id="submit-btn" type="button" class="btn btn-primary">
+          Submit
+        </button>
+        </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>

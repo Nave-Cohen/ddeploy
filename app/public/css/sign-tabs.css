@@ -1,0 +1,65 @@
+body {
+  background-color: #ddd3dc;
+}
+#main-container {
+  display: flex;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1060px;
+  height: 550px;
+  border-radius: 15px;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.233);
+  background-color: white;
+  align-items: center;
+  text-align: center;
+}
+.child {
+  width: 50%;
+}
+.child.img {
+  height: 100%;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+  background-image: url('../images/sign-tab-img.png');
+  background-size: cover;
+}
+.child.img h1 {
+  font-weight: bold;
+  color: white;
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.child.img.right {
+  background-image: url('../images/sign-tab-img-reverse.png');
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+.form-control {
+  width: 65%;
+  margin: 0 auto 0 auto;
+}
+.nav-item {
+  width: 90px;
+}
+.alert {
+  margin: 25px auto;
+  width: 80%;
+}
+@media only screen and (max-width: 600px) {
+  #img {
+    display: none;
+  }
+  .child.content {
+    width: 100%;
+  }
+  #main-container {
+    width: 300px;
+    justify-content: center;
+  }
+}
