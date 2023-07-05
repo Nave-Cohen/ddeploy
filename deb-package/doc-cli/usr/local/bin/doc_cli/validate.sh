@@ -11,21 +11,22 @@ function help() {
     echo "  rebuild  - Rebuild the application"
 }
 
-# Check if an option is provided
-if [ -z "$1" ]; then
-    help
+# Check if a runner environment was found
+if [[ $workdir == "$HOME" ]]; then
+    cwd=$(basename "$PWD")
+    echo "Error: '$cwd' is not a runner environment"
     exit 1
 fi
 
+# Check if an option is provided
 # Check if the provided option script exists
-if [[ ! -f "$script_dir/$1.sh" ]]; then
+if [ -z "$1" ] || [[ ! -f "$script_dir/$1.sh" ]]; then
     echo "Error: Invalid option: $1"
     help
     exit 1
 fi
 
 # Find the runner environment by searching up the directory tree
-runner_file=""
 while [[ $workdir != "$HOME" ]]; do
     runner_file="$workdir/.runner.env"
     if [[ -f $runner_file ]]; then
@@ -33,13 +34,6 @@ while [[ $workdir != "$HOME" ]]; do
     fi
     workdir=$(dirname "$workdir")
 done
-
-# Check if a runner environment was found
-if [[ $workdir == "$HOME" ]]; then
-    cwd=$(basename "$PWD")
-    echo "Error: '$cwd' is not a runner environment"
-    exit 1
-fi
 
 # Export workdir and load variables from .runner.env
 export $(grep -v '^#' "$workdir/.runner.env" | xargs)
