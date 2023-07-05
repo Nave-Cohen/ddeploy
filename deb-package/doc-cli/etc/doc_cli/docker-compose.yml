@@ -1,0 +1,73 @@
+services:
+  nginx:
+    image: nginx:latest
+    restart: unless-stopped
+    container_name: nginx
+    depends_on:
+      certbot:
+        condition: service_completed_successfully
+    ports:
+      - 443:443
+    env_file: ./.runner.env
+    volumes:
+      - ./entrypoint/nginx.conf:/etc/nginx/templates/default.conf.template
+      - certs:/etc/letsencrypt
+    volumes_from:
+      - certbot
+
+  nginx-acme:
+    container_name: nginx-acme
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./entrypoint/nginx-acme.conf:/etc/etc/nginx/templates/default.conf.template
+      - html:/usr/share/nginx/html
+
+  certbot:
+    container_name: certbot
+    image: certbot/certbot:latest
+    entrypoint: /bin/sh
+    command: -c "/certbot-scripts/certbot-entrypoint.sh"
+    volumes:
+      - ./entrypoint/certbot-entrypoint.sh:/certbot-scripts/certbot-entrypoint.sh
+      - html:/var/www/letsencrypt
+      - certs:/etc/letsencrypt
+
+  database:
+    container_name: mysql_db
+    image: mysql:latest
+    restart: unless-stopped
+    env_file: ./.env
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - db:/var/lib/db
+      - ./entrypoint/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+
+  app:
+    container_name: app
+    depends_on:
+      database:
+        condition: service_healthy
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      args:
+        - GIT=${GIT}
+        - REF=${REF}
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    env_file:
+      - ./.env
+    environment:
+      - MYSQL_HOST=database
+
+volumes:
+  db:
+  certs:
+  html:

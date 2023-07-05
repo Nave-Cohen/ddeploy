@@ -21,7 +21,10 @@ runner_file=""
 parent_dir=$(dirname "$workdir")
 script_dir="/usr/local/bin/doc_cli"
 
-
+if [ "$1" == "init" ]; then
+    bash $script_dir/init.sh
+    exit 0
+fi
 
 # Start searching from the current directory and go up the directory tree
 while [[ $workdir != "$HOME" ]]; do
@@ -54,6 +57,15 @@ elif  [ -z "$DOMAIN" ]; then
     exit 1
 elif   [ -z $BRANCH ]; then
     echo "BRANCH=*** must be defined in .runner.env file"
+    exit 1
+elif   [ -z $MAIL ]; then
+    echo "MAIL=*** must be defined in .runner.env file"
+    exit 1
+elif   [ -z $BACKEND_IP ]; then
+    echo "BACKEND_IP=*** must be defined in .runner.env file"
+    exit 1
+elif   [ -z $BACKEND_PORT ]; then
+    echo "BACKEND_PORT=*** must be defined in .runner.env file"
     exit 1
 fi
 
