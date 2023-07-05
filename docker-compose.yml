@@ -50,12 +50,11 @@ services:
 
   app:
     container_name: app
-    image: nave1616/taskify:latest
     depends_on:
       database:
         condition: service_healthy
     build:
-      context: ./taskify
+      context: ./app
       dockerfile: Dockerfile
       args:
         - GIT=${GIT}
