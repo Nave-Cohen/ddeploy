@@ -19,16 +19,16 @@ cwd=$(echo $PWD | xargs basename)
 
 runner_file=""
 parent_dir=$(dirname "$workdir")
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+script_dir="/usr/local/bin/doc_cli"
 
 
 
 # Start searching from the current directory and go up the directory tree
 while [[ $workdir != "$HOME" ]]; do
-    runner_file="$workdir/.runner"
+    runner_file="$workdir/.runner.env"
 
     if [[ -f $runner_file ]]; then
-        export $(grep -v '^#' "$workdir/.runner" | xargs)
+        export $(grep -v '^#' "$workdir/.runner.env" | xargs)
         export workdir="$workdir"
         REPO=$(echo "$GIT" | sed -e 's#.*github.com/##' -e 's#\.git$##')
         export GIT_REF=https://api.github.com/repos/$REPO/git/refs/heads/$BRANCH
@@ -47,13 +47,13 @@ if [[ $workdir == "$HOME" ]]; then
 fi
 
 if [ -z "$GIT" ]; then
-    echo "GIT=*** must be defined in .runner file"
+    echo "GIT=*** must be defined in .runner.env file"
     exit 1
 elif  [ -z "$DOMAIN" ]; then
-    echo "DOMAIN=*** must be defined in .runner file"
+    echo "DOMAIN=*** must be defined in .runner.env file"
     exit 1
 elif   [ -z $BRANCH ]; then
-    echo "BRANCH=*** must be defined in .runner file"
+    echo "BRANCH=*** must be defined in .runner.env file"
     exit 1
 fi
 

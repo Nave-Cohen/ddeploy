@@ -1,0 +1,6 @@
+Package: doc-cli
+Version: 1.0
+Architecture: all
+Maintainer: Internal Pointers <nave.cohen@e.braude.ac.il>
+Description: doc-cli description
+Depends: jq , docker, git

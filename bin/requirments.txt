@@ -1,3 +1,0 @@
-jq
-docker
-git

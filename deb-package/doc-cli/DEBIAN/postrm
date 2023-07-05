@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "remove" ]; then
+    rm -rf /usr/local/bin/doc_cli
+    rm /bin/doc
+    echo doc_cli succesfully removed.
+fi
+
+exit 0
