@@ -13,6 +13,6 @@ if [[ ! -f ".env" ]]; then
     echo + .env
 fi
 
-echo -e 'NAME=#project-name\nGIT=#git repository url\nBRANCH=#example: main\nDOMAIN=#example.com\nMAIL=\nBACKEND_IP=\nBACKEND_PORT=3000\n' > .runner.env
+echo -e 'GIT=#git repository url\nBRANCH=#example: main\nDOMAIN=#example.com\nMAIL=\nBACKEND_IP=\nBACKEND_PORT=3000\n' > .runner.env
 echo + .runner.env
 echo .runner.env must be edited.
