@@ -1,6 +1,19 @@
 #!/bin/bash
 
 
+if [ -z "$1" ]; then
+    echo "useage: doc [option]"
+    echo "options:"
+    echo " status - get web and compose status"
+    echo " services "
+    echo " up"
+    echo " fetch"
+    echo " rebuild"
+    exit 1
+fi
+
+
+
 workdir="$PWD"
 cwd=$(echo $PWD | xargs basename)
 

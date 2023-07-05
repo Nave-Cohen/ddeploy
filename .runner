@@ -1,6 +1,0 @@
-NAME=docker-project
-GIT=https://github.com/Nave-Cohen/Web-Project.git
-BRANCH=main
-COMMIT=f86dcd473f50ea26fb1b55e7ceba679218056aa8
-TOKEN=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
-DOMAIN=nave.autos
