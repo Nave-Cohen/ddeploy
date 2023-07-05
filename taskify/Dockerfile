@@ -1,7 +1,15 @@
 FROM node:20-alpine
+ARG GIT
+ARG REF
+
 WORKDIR /app
-COPY ./package.json .
-COPY ./package-lock.json .
+RUN apk update && apk add git
+
+ADD $REF version.json
+
+RUN git clone $GIT /app/repo/
+
+WORKDIR /app/repo
 RUN npm install
 COPY . .
 

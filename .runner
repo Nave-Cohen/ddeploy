@@ -1,0 +1,6 @@
+NAME=docker-project
+BRANCH=main
+COMMIT=f86dcd473f50ea26fb1b55e7ceba679218056aa8
+DOMAIN=nave.autos
+GIT=https://github.com/Nave-Cohen/Web-Project.git
+REF=https://api.github.com/repos/Nave-Cohen/Web-Project/git/refs/heads/main
