@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd $workdir
 docker_status=$(docker compose ls | awk -v project="$NAME" '$1 == project {print $2}')
 if [[ -z $docker_status ]]; then
     docker_status="Not running"
@@ -17,5 +17,5 @@ fi
 created=$(docker inspect -f '{{.Created}}' "$NAME-app" | date -f - +"%d-%m-%Y %H:%M")
 
 echo "Project name: $NAME"
-printf "%-20s %-20s %-20s\n" "HTTP Status" "Docker Status" "Last build"
-printf "%-20s %-20s %-20s\n" "$http_status" "$docker_status" "$created"
+printf "%-20s %-20s %-20s %-15s %-20s\n" "HTTP Status" "Docker Status" "Last build" "Branch" "Commit"
+printf "%-20s %-20s %-20s %-15s %-20s\n" "$http_status" "$docker_status" "$created" "$BRANCH" "$COMMIT"

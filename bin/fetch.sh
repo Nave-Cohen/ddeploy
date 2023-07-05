@@ -1,23 +1,10 @@
 
-cd "$(dirname "$0")"
-docker_project_name=$(cd .. && pwd | cut -d '/' -f 3) 
-echo "NAME=$docker_project_name" > ../.runner
+docker_project_name=$(echo $workdir | xargs basename) 
+echo "NAME=$docker_project_name" > $workdir/.runner
 
 
-get_json_item() {
-  local json="$1"
-  local key="$2"
-
-  local item=$(echo "$json" | jq -r ".$key")
-  echo "$item"
-}
-
-ref=$(curl -s "$GIT_REF")
-json_ref=$(echo $ref | jq -c .)
-
-echo "BRANCH=$(get_json_item "$json_ref" "ref" | cut -d '/' -f 3)" >> ../.runner
-echo "COMMIT=$(get_json_item "$json_ref" "object.sha")" >> ../.runner
-
-echo "DOMAIN=$DOMAIN" >> ../.runner
-echo "GIT=$GIT" >> ../.runner
-echo "REF=$GIT_REF" >> ../.runner
+echo "GIT=$GIT" >> $workdir/.runner
+echo "BRANCH=$(echo $JSON_RES | jq -r ".ref" | xargs basename)" >> $workdir/.runner
+echo "COMMIT=$(echo "$JSON_RES" | jq -r ".object.sha")" >> $workdir/.runner #send from rebuild
+echo "TOKEN=$TOKEN" >> $workdir/.runner
+echo "DOMAIN=$DOMAIN" >> $workdir/.runner
