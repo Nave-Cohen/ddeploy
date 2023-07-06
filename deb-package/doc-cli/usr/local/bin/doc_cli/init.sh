@@ -3,7 +3,7 @@ if [[ -f ".runner.env" ]]; then
     exit 1
 fi
 
-cp -r /etc/doc_cli/. .
+cp -r /etc/doc_cli/init/. .
 echo + docker-compose.yml
 echo + app/Dockerfile
 echo + entrypoint

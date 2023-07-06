@@ -27,10 +27,8 @@ services:
   certbot:
     container_name: certbot
     image: certbot/certbot:latest
-    entrypoint: /bin/sh
-    command: -c "/certbot-scripts/certbot-entrypoint.sh"
+    command: certonly --webroot -w /var/www/letsencrypt --preferred-challenges http-01 --email nave1616@hotmail.com --agree-tos -d nave.autos --non-interactive --keep-until-expiring
     volumes:
-      - ./entrypoint/certbot-entrypoint.sh:/certbot-scripts/certbot-entrypoint.sh
       - html:/var/www/letsencrypt
       - certs:/etc/letsencrypt
 

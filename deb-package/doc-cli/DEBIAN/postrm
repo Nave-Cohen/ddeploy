@@ -1,11 +1,22 @@
 #!/bin/sh
 
 set -e
-
 if [ "$1" = "remove" ]; then
-    rm -rf /usr/local/bin/doc_cli
-    rm /bin/doc
-    echo doc_cli succesfully removed.
-fi
+    # Specify the cron job commands to remove
+    cron_job1="* * * * * /usr/lib/run/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1"
+    cron_job2="* * * * * sleep 30; /usr/lib/run/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1"
 
-exit 0
+    # Get the current crontab entries
+    current_crontab=$(crontab -l)
+
+    # Remove the specified cron job commands from the crontab
+    updated_crontab=$(echo "$current_crontab" | grep -vF "$cron_job1" | grep -vF "$cron_job2")
+
+    # Install the updated crontab
+    echo "$updated_crontab" | crontab -
+
+    echo "Cron jobs removed successfully."
+    echo "doc_cli successfully removed."
+
+    exit 0
+fi

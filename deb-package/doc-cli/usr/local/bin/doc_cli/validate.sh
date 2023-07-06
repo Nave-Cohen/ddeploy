@@ -36,8 +36,9 @@ while [[ $workdir != "$HOME" ]]; do
 done
 
 # Export workdir and load variables from .runner.env
+export workdir="$workdir"
 export $(grep -v '^#' "$workdir/.runner.env" | xargs)
-
+export NAME=$(basename "$workdir")
 # Validate required variables
 required_variables=("GIT" "DOMAIN" "BRANCH" "MAIL" "BACKEND_IP" "BACKEND_PORT")
 for variable in "${required_variables[@]}"; do

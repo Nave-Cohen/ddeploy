@@ -3,9 +3,31 @@
 set -e
 
 if [ "$1" = "configure" ]; then
-    rm /bin/doc
-    ln -s /usr/local/bin/doc_cli/doc.sh /bin/doc
-fi
+    # Specify the cron job command
+    cron_job=$(printf "* * * * * /usr/lib/run/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1\n* * * * * sleep 30; /usr/lib/run/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1")
 
-# Return with no errors
-exit 0
+    # Create a temporary file to store the current crontab entries
+    temp_file=$(mktemp)
+
+    # Export the current crontab to the temporary file
+    crontab -l > "$temp_file"
+
+    # Remove the cron job if it exists
+    if grep -qF "$cron_job" "$temp_file"; then
+        sed -i "/$cron_job/d" "$temp_file"
+    fi
+
+    # Append the new cron job to the temporary file
+    printf "%s\n" "$cron_job" >> "$temp_file"
+
+    # Install the updated crontab from the temporary file
+    crontab "$temp_file"
+
+    # Clean up the temporary file
+    rm "$temp_file"
+
+    # Create a symbolic link if it doesn't exist
+    if [ ! -L "/bin/doc" ]; then
+        ln -s -f /usr/local/bin/doc_cli/doc.sh /bin/doc
+    fi
+fi
