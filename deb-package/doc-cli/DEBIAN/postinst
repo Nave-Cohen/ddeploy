@@ -4,7 +4,7 @@ set -e
 
 if [ "$1" = "configure" ]; then
     # Specify the cron job command
-    cron_job=$(printf "* * * * * /usr/lib/run/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1\n* * * * * sleep 30; /usr/lib/run/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1")
+    cronjob='* * * * * for i in {1..12}; do sleep 5;flock -n /tmp/doc.lock /usr/bin/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1; done'
 
     # Create a temporary file to store the current crontab entries
     temp_file=$(mktemp)
@@ -12,13 +12,8 @@ if [ "$1" = "configure" ]; then
     # Export the current crontab to the temporary file
     crontab -l > "$temp_file"
 
-    # Remove the cron job if it exists
-    if grep -qF "$cron_job" "$temp_file"; then
-        sed -i "/$cron_job/d" "$temp_file"
-    fi
-
     # Append the new cron job to the temporary file
-    printf "%s\n" "$cron_job" >> "$temp_file"
+    printf "%s\n" "$cronjob" >> "$temp_file"
 
     # Install the updated crontab from the temporary file
     crontab "$temp_file"

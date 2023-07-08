@@ -3,14 +3,13 @@
 set -e
 if [ "$1" = "remove" ]; then
     # Specify the cron job commands to remove
-    cron_job1="* * * * * /usr/lib/run/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1"
-    cron_job2="* * * * * sleep 30; /usr/lib/run/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1"
+    cronjob='* * * * * for i in {1..12}; do sleep 5;flock -n /tmp/doc.lock /usr/bin/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1; done'
 
     # Get the current crontab entries
     current_crontab=$(crontab -l)
 
     # Remove the specified cron job commands from the crontab
-    updated_crontab=$(echo "$current_crontab" | grep -vF "$cron_job1" | grep -vF "$cron_job2")
+    updated_crontab=$(echo "$current_crontab" | grep -vF "$cronjob")
 
     # Install the updated crontab
     echo "$updated_crontab" | crontab -
