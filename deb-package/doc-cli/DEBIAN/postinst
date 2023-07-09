@@ -4,7 +4,7 @@ set -e
 
 if [ "$1" = "configure" ]; then
     # Specify the cron job command
-    cronjob='* * * * * for i in {1..12}; do sleep 5;flock -n /tmp/doc.lock /usr/bin/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1; done'
+    cronjob='* * * * * /etc/doc_cli/maintence/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1'
 
     # Create a temporary file to store the current crontab entries
     temp_file=$(mktemp)
@@ -21,8 +21,4 @@ if [ "$1" = "configure" ]; then
     # Clean up the temporary file
     rm "$temp_file"
 
-    # Create a symbolic link if it doesn't exist
-    if [ ! -L "/bin/doc" ]; then
-        ln -s -f /usr/local/bin/doc_cli/doc.sh /bin/doc
-    fi
 fi

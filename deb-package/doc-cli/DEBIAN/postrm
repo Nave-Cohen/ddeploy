@@ -3,7 +3,7 @@
 set -e
 if [ "$1" = "remove" ]; then
     # Specify the cron job commands to remove
-    cronjob='* * * * * for i in {1..12}; do sleep 5;flock -n /tmp/doc.lock /usr/bin/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1; done'
+    cronjob='* * * * * /etc/doc_cli/maintence/rebuilder.sh >> /var/log/doc_cli/cron.log 2>&1'
 
     # Get the current crontab entries
     current_crontab=$(crontab -l)

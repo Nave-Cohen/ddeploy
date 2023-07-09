@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+export base="/etc/doc_cli"
+export WORKDIR="$PWD"
+export MAIN_DIR="$base"
+
+if [ "$#" -lt 1 ]; then
+    echo "[ERROR] No command set"
+    exit 5
+fi
+
+if [[ $1 == "init" ]]; then
+    shift
+    /usr/bin/env bash "$base/commands/init/index.sh" "$@"
+    exit $?
+fi
+
+folder=$(/usr/bin/env bash "$base/helpers/isWorkdir.sh")
+if [ -z "$folder" ]; then
+    echo "$(basename "$WORKDIR") is not a runner environment"
+    exit 6
+else
+    export WORKDIR="$folder"
+fi
+
+function checkEnv(){
+    runner_env_file="$WORKDIR/.runner.env"
+    if [ -f "$runner_env_file" ]; then
+        export $(grep -v '^#' "$runner_env_file" | xargs)
+    else
+        echo "[ERROR] $runner_env_file not found"
+        exit 7
+    fi
+    required_variables=("GIT" "BRANCH" "DOMAIN" "MAIL" "BACKEND_IP" "BACKEND_PORT")
+    for variable in "${required_variables[@]}"; do
+        if [[ -z "${!variable}" ]]; then
+            echo "Error: $variable must be defined in .runner.env file"
+            exit 1
+        fi
+    done
+}
+
+sub_command="$base/commands/$1/index.sh"
+if [ -f "$sub_command" ]; then
+    shift
+    export SCRIPT_BASE="$base/commands/$1"
+    checkEnv
+    /usr/bin/env bash "$sub_command" "$@"
+else
+    echo "[ERROR] Unknown command: $1."
+    exit 6
+fi
