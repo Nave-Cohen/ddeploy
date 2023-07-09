@@ -23,7 +23,6 @@ jobs:
       - name: Install package
         run: sudo dpkg -i ddeploy_1.0_all.deb
       - name: cd tests folder
-        run: cd tests
-      - name: Run tests
+        working-directory: ./tests
         run: ./cli-test.sh
 
