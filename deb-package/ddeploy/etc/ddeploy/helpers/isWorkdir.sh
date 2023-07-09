@@ -7,8 +7,8 @@ fi
 
 folder=$(jq -r --arg search "$workdir" '.[] | select(.folder == $search) | .folder' "$json_file")
 
-if [[ -n "$folder" ]]; then
-  echo "$folder"
-else
+if [[ ! -d "$workdir" ]] || [ -z "$folder" ] || [ ! -f "$workdir/.ddeploy.env" ]; then
   echo ""
+else
+  echo "$folder"
 fi

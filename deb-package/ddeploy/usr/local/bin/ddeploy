@@ -23,38 +23,26 @@ else
     export WORKDIR="$folder"
 fi
 
-function checkEnv(){
-    runner_env_file="$WORKDIR/.ddeploy.env"
-    if [ -f "$runner_env_file" ]; then
-        export $(grep -v '^#' "$runner_env_file" | xargs)
-    else
-        echo "[ERROR] $runner_env_file not found"
-        exit 7
+
+export $(grep -v '^#' "$WORKDIR/.ddeploy.env" | xargs)
+required_variables=("GIT" "BRANCH" "DOMAIN" "MAIL" "BACKEND_IP" "BACKEND_PORT")
+for variable in "${required_variables[@]}"; do
+    if [[ -z "${!variable}" ]]; then
+        echo "Error: $variable must be defined in .ddeploy.env file"
+        exit 1
     fi
-    required_variables=("GIT" "BRANCH" "DOMAIN" "MAIL" "BACKEND_IP" "BACKEND_PORT")
-    for variable in "${required_variables[@]}"; do
-        if [[ -z "${!variable}" ]]; then
-            echo "Error: $variable must be defined in .ddeploy.env file"
-            exit 1
-        fi
-    done
-}
+done
 
 sub_command="$base/commands/$1/index.sh"
 if [ -f "$sub_command" ]; then
     shift
-    export SCRIPT_BASE="$base/commands/$1"
-    checkEnv
     /usr/bin/env bash "$sub_command" "$@"
     exit 0
 elif command docker compose "$@" --help >/dev/null 2>&1; then
     # Check if the provided command is a valid Docker Compose command
     # Run the Docker Compose command
     docker compose "$@"
-elif command docker help "$@" >/dev/null 2>&1; then
-    # Check if the provided command is a valid Docker command
-    # Run the Docker command
-    docker "$@"
+    exit 0
 else
     echo "[ERROR] Unknown command: $@"
     exit 6

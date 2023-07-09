@@ -8,8 +8,7 @@ exec > "/var/log/ddeploy/cron.log" 2>&1
 function checkEnviorment(){
     workdir="$1"
     folder=$(/usr/bin/env bash "$base/helpers/isWorkdir.sh" "$workdir")
-    runner_env_file="$workdir/.ddeploy.env"
-    if [ -z "$folder" ] || [ ! -f "$runner_env_file" ]; then
+    if [ -z "$folder" ]; then
         sed -i "$workdir/d" "$folders_file"
         echo -e "ddeploy Environment not found in $(basename "$workdir")\nRemoved from autobuild"
         return 1

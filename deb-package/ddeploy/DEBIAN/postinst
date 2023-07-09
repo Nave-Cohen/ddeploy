@@ -1,28 +1,33 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
-remove_cron() {
-    # Remove the cron job that runs rebuilder.sh every minute
-    crontab -l | grep -vF '/etc/ddeploy/maintence/rebuilder.sh' | crontab -
-
-    # Remove the cron job that runs cleaner.sh once a day
-    crontab -l | grep -vF '/etc/ddeploy/maintence/cleaner.sh' | crontab -
-
-    echo "Cron jobs removed successfully."
+restore_conf(){
+    log_folder="/var/tmp/ddeploy/log"
+    conf_folder="/var/tmp/ddeploy/conf"
+    if [[ -d "$log_folder" ]]; then
+        mv $log_folder/* /var/log/ddeploy
+        rm -r $log_folder
+    fi
+    if [[ -d "$conf_folder" ]]; then
+        mv $conf_folder/* /etc/ddeploy/configs
+        rm -r $conf_folder
+    fi
+    rmdir /var/tmp/ddeploy
 }
 
-
-if [ "$1" = "configure" ]; then
-    remove_cron
-    
+create_cronjobs(){
     # Define the cron job commands
     cronjob='* * * * * /etc/ddeploy/maintence/rebuilder.sh'
     cronjob2='0 0 * * * /etc/ddeploy/maintence/cleaner.sh'
 
     # Add the cron job commands to the crontab
     (crontab -l ; echo "$cronjob" ; echo "$cronjob2") | crontab -
+}
 
-    echo "Cron jobs configured successfully."
-
+if [ "$1" = "configure" ]; then
+    echo "Configure new cronjobs ..."
+    create_cronjobs
+    echo "Restore configuration files ..."
+    restore_conf
 fi
