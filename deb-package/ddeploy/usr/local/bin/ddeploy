@@ -46,7 +46,16 @@ if [ -f "$sub_command" ]; then
     export SCRIPT_BASE="$base/commands/$1"
     checkEnv
     /usr/bin/env bash "$sub_command" "$@"
+    exit 0
+elif command docker compose "$@" --help >/dev/null 2>&1; then
+    # Check if the provided command is a valid Docker Compose command
+    # Run the Docker Compose command
+    docker compose "$@"
+elif command docker help "$@" >/dev/null 2>&1; then
+    # Check if the provided command is a valid Docker command
+    # Run the Docker command
+    docker "$@"
 else
-    echo "[ERROR] Unknown command: $1."
+    echo "[ERROR] Unknown command: $@"
     exit 6
 fi
