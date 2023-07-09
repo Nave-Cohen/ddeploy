@@ -13,7 +13,6 @@ restore_conf(){
         mv $conf_folder/* /etc/ddeploy/configs
         rm -r $conf_folder
     fi
-    rmdir /var/tmp/ddeploy
 }
 
 create_cronjobs(){
