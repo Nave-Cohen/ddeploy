@@ -22,8 +22,8 @@ if [[ $git_status != "200" ]] ; then
     exit 1
 fi
 
-# Copy necessary files from /etc/doc_cli/init/
-cp -r /etc/doc_cli/init/. .
+# Copy necessary files from $base/init/
+cp -r $base/init/. .
 echo + docker-compose.yml
 echo + app/Dockerfile
 echo + entrypoint
@@ -34,17 +34,17 @@ if [[ ! -f ".env" ]]; then
     echo "+ .env file created."
 fi
 
-# Create .runner.env file
-echo -e "GIT=$1\nBRANCH=$2\nDOMAIN=#example.com\nMAIL=\nBACKEND_IP=\nBACKEND_PORT=3000\n" > .runner.env
-echo "+ .runner.env"
-echo ".runner.env must be edited."
+# Create .ddeploy.env file
+echo -e "GIT=$1\nBRANCH=$2\nDOMAIN=#example.com\nMAIL=\nBACKEND_IP=\nBACKEND_PORT=3000\n" > .ddeploy.env
+echo "+ .ddeploy.env"
+echo ".ddeploy.env must be edited."
 
-export $(grep -v '^#' ".runner.env" | xargs)
+export $(grep -v '^#' ".ddeploy.env" | xargs)
 # Extract repository and commit information
-last_commit=$(/usr/bin/env bash /etc/doc_cli/helpers/fetchCommit.sh)
+last_commit=$(/usr/bin/env bash $base/helpers/fetchCommit.sh)
 
 # Update the JSON file with the new item
-json_file="/etc/doc_cli/configs/enviorments.json"
+json_file="$base/configs/deploys.json"
 new_item=$(jq -n --arg folder "$PWD" --arg commit "$last_commit" '{"folder": $folder, "commit": $commit}')
 jq --argjson new_item "$new_item" '. + [$new_item]' "$json_file" > "$json_file.tmp" && \
 mv "$json_file.tmp" "$json_file"

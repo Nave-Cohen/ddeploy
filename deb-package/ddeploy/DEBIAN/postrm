@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+if [ "$1" = "remove" ]; then
+    file="/etc/apt/apt.conf.d/01-custom-aliases"
+    sed -i '/alias dep="ddeploy"/d' "$file"
+
+    crontab -l | grep -vF '/etc/ddeploy/maintence/rebuilder.sh' | crontab -
+
+    # Remove the cron job that runs cleaner.sh once a day
+    crontab -l | grep -vF '/etc/ddeploy/maintence/cleaner.sh' | crontab -
+
+    echo "Cron jobs removed successfully."
+    echo "ddeploy successfully removed."
+
+    exit 0
+fi

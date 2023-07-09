@@ -2,26 +2,26 @@
 NAME=$(basename "$WORKDIR")
 if [[ $1 == "on" ]]; then
     if [[ ! -f "$base/configs/token" ]]; then
-        echo "[ERROR] - Token must added first\ndoc token [Token]"
+        echo -e "[ERROR] - Token must added first\ndoc token [Token]"
         exit 1
     fi
-    if ! grep -q "$WORKDIR" $base/configs/rebuild.txt; then
-        echo "$WORKDIR|$2" >> $base/configs/rebuild.txt
+    if ! grep -q "$WORKDIR" $base/configs/rebuild.lst; then
+        echo "$WORKDIR" >> $base/configs/rebuild.lst
     fi
     echo "Auto rebuild for $NAME is on"
     exit 0
 fi
 
 if [[ $1 == "off" ]]; then
-    grep -v "$WORKDIR" $base/configs/rebuild.txt > $base/configs/rebuild.tmp
-    mv $base/configs/rebuild.tmp $base/configs/rebuild.txt
+    grep -v "$WORKDIR" $base/configs/rebuild.lst > $base/configs/rebuild.tmp
+    mv $base/configs/rebuild.tmp $base/configs/rebuild.lst
 
     echo "Auto rebuild for $NAME is off"
     exit 0
 fi
 
 if [[ $1 == "list" ]]; then
-    file_list="$base/configs/rebuild.txt"
+    file_list="$base/configs/rebuild.lst"
     
     while IFS= read -r line; do
         folder=$(basename "$line")

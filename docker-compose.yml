@@ -8,7 +8,7 @@ services:
         condition: service_completed_successfully
     ports:
       - 443:443
-    env_file: ./.runner.env
+    env_file: ./.ddeploy.env
     volumes:
       - ./entrypoint/nginx.conf:/etc/nginx/templates/default.conf.template
       - certs:/etc/letsencrypt

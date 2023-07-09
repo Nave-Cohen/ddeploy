@@ -1,6 +1,6 @@
-Package: doc-cli
+Package: ddeploy
 Version: 1.0
 Architecture: all
 Maintainer: Internal Pointers <nave.cohen@e.braude.ac.il>
-Description: doc-cli description
+Description: ddeploy description
 Depends: jq , docker, git

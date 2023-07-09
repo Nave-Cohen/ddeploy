@@ -1,0 +1,37 @@
+#!/bin/sh
+
+set -e
+
+remove_cron() {
+    # Remove the cron job that runs rebuilder.sh every minute
+    crontab -l | grep -vF '/etc/ddeploy/maintence/rebuilder.sh' | crontab -
+
+    # Remove the cron job that runs cleaner.sh once a day
+    crontab -l | grep -vF '/etc/ddeploy/maintence/cleaner.sh' | crontab -
+
+    echo "Cron jobs removed successfully."
+}
+
+
+set_alias() {
+    file="/etc/apt/apt.conf.d/01-custom-aliases"
+    if [ -f "$file" ]; then
+        sed -i '/alias dep="ddeploy"/d' "$file"
+    fi
+    echo 'alias dep="ddeploy"' >> "$file"
+}
+
+if [ "$1" = "configure" ]; then
+    set_alias
+    remove_cron
+    
+    # Define the cron job commands
+    cronjob='* * * * * /etc/ddeploy/maintence/rebuilder.sh'
+    cronjob2='0 0 * * * /etc/ddeploy/maintence/cleaner.sh'
+
+    # Add the cron job commands to the crontab
+    (crontab -l ; echo "$cronjob" ; echo "$cronjob2") | crontab -
+
+    echo "Cron jobs configured successfully."
+
+fi

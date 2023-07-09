@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export base="/etc/doc_cli"
+export base="/etc/ddeploy"
 export WORKDIR="$PWD"
 export MAIN_DIR="$base"
 
@@ -24,7 +24,7 @@ else
 fi
 
 function checkEnv(){
-    runner_env_file="$WORKDIR/.runner.env"
+    runner_env_file="$WORKDIR/.ddeploy.env"
     if [ -f "$runner_env_file" ]; then
         export $(grep -v '^#' "$runner_env_file" | xargs)
     else
@@ -34,7 +34,7 @@ function checkEnv(){
     required_variables=("GIT" "BRANCH" "DOMAIN" "MAIL" "BACKEND_IP" "BACKEND_PORT")
     for variable in "${required_variables[@]}"; do
         if [[ -z "${!variable}" ]]; then
-            echo "Error: $variable must be defined in .runner.env file"
+            echo "Error: $variable must be defined in .ddeploy.env file"
             exit 1
         fi
     done

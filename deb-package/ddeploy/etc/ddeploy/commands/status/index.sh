@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 NAME=$(basename "$WORKDIR")
 
-commit=$(jq -r --arg folder "$WORKDIR" '.[] | select(.folder == $folder) | .commit' /etc/doc_cli/configs/enviorments.json)
+commit=$(jq -r --arg folder "$WORKDIR" '.[] | select(.folder == $folder) | .commit' $base/configs/deploys.json)
 
 # Get Docker status
 docker_status=$(docker compose ls | awk -v project="$NAME" '$1 == project {print $2}')

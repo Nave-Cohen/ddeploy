@@ -4,10 +4,11 @@ if [ $# -lt 1 ]; then
 fi
 
 token="$1"
-commit=$(bash "$base/helpers/fetchCommit.sh $token")
+commit=$(bash "$base/helpers/fetchCommit.sh" "$token")
 
 if [ -n "$commit" ]; then
     echo "$token" > "$base/configs/token"
+    echo "Token is added successfully"
 else
     echo "Token is not valid"
 fi
