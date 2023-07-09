@@ -13,16 +13,7 @@ remove_cron() {
 }
 
 
-set_alias() {
-    file="/etc/apt/apt.conf.d/01-custom-aliases"
-    if [ -f "$file" ]; then
-        sed -i '/alias dep="ddeploy"/d' "$file"
-    fi
-    echo 'alias dep="ddeploy"' >> "$file"
-}
-
 if [ "$1" = "configure" ]; then
-    set_alias
     remove_cron
     
     # Define the cron job commands

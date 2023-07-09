@@ -31,9 +31,12 @@ if [[ $1 == "list" ]]; then
     exit 0
 fi
 
-if [ $# -lt 1 ]; then
-command docker compose build --build-arg GIT="$GIT"
-command docker compose up -d
-else
-    echo ./_help
+if [[ $1 == "-d" ]]; then
+    command docker compose build --build-arg GIT="$GIT"
+    command docker compose up -d
+elif [[ $# -lt 1 ]];then 
+    command docker compose build --build-arg GIT="$GIT"
+    command docker compose up
+else 
+    cat ./_help
 fi
