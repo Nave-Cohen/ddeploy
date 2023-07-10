@@ -1,0 +1,11 @@
+This command is used to set a GitHub token for auto-rebuilding on a new commit.
+
+Usage: ddeploy token [token]
+
+Arguments:
+- [token]: The GitHub token to be set.
+
+Note: The provided token should have appropriate permissions to access the repository.
+
+If the token is valid and can successfully fetch the commit information, it will be added to the configuration file. Otherwise, an error message will be displayed.
+

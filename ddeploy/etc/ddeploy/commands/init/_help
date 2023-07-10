@@ -1,0 +1,12 @@
+This command is used to initialize a new ddeploy runner environment.
+
+Usage: ddeploy init [github-url] [branch-name]
+
+Arguments:
+- github-url: The GitHub URL of the repository to be deployed.
+- branch-name: The name of the branch to be deployed.
+
+Note:
+- Before running this script, make sure you have set the necessary values in the .ddeploy.env file (generated automatically).
+- The .ddeploy.env file contains configuration options such as GIT, BRANCH, DOMAIN, MAIL, BACKEND_IP, BACKEND_PORT, MYSQL_USER, MYSQL_PASSWORD, and MYSQL_DATABASE. Make sure to edit this file according to your project requirements.
+

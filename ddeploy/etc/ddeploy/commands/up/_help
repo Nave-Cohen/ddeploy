@@ -1,0 +1,16 @@
+This command is used to manage the auto-rebuilding feature of a ddeploy project.
+
+Usage: ddeploy up [option]
+
+Options:
+- on: Enable auto-rebuild for the current project.
+- off: Disable auto-rebuild for the current project.
+- list: List all projects with auto-rebuild enabled.
+- -d: Build and run the project in detached mode.
+- No option: Build and run the project.
+
+Note:
+- Before using the 'on' option, make sure to add the GitHub token using 'doc token [token]'.
+- Auto-rebuild enables the project to automatically rebuild and run whenever a new commit is detected in the repository.
+- app build with enviorment varaibles from .ddeploy.env and .env (if exist).
+

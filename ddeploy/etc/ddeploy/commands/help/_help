@@ -1,0 +1,10 @@
+Usage: ddeploy [COMMAND] [OPTIONS]:
+  
+ Commands:
+  - init [github-url] [branch] - initialize new ddeploy project
+  - status - show the status of HTTP, container, and images
+  - token [github-Token] - set a GitHub token for auto-rebuild on new commit
+  - up [ | -d | on | off | list] - rebuild and compose up, or add/remove from auto rebuild
+
+Run 'ddeploy [COMMAND] help' for more information on a command.
+

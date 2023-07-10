@@ -1,0 +1,15 @@
+This command retrieves and displays the status information of an environment.
+
+Usage: ddeploy status
+
+The script displays the following information:
+
+- HTTP Status: The HTTP status of the environment.
+- Docker Status: The status of the Docker containers.
+- Last build: The timestamp of the last build.
+- Branch: The branch associated with the environment.
+- Commit: The commit information associated with the environment.
+
+Services:
+The script also displays the status of the Docker services running within the environment, including the name, image, and status of each service.
+

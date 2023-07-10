@@ -4,6 +4,7 @@ export base="/etc/ddeploy"
 export WORKDIR="$PWD"
 export MAIN_DIR="$base"
 
+
 if [ "$#" -lt 1 ]; then
     echo "[ERROR] No command set"
     exit 5
@@ -11,11 +12,11 @@ fi
 
 if [[ $1 == "init" ]]; then
     shift
-    /usr/bin/env bash "$base/commands/init/index.sh" "$@"
+    "$base/commands/init/index.sh" "$@"
     exit $?
 fi
 
-folder=$(/usr/bin/env bash "$base/helpers/isWorkdir.sh")
+folder=$("$base/helpers/isWorkdir.sh")
 if [ -z "$folder" ]; then
     echo "$(basename "$WORKDIR") is not a runner environment"
     exit 6
@@ -25,7 +26,7 @@ fi
 
 
 export $(grep -v '^#' "$WORKDIR/.ddeploy.env" | xargs)
-required_variables=("GIT" "BRANCH" "DOMAIN" "MAIL" "BACKEND_IP" "BACKEND_PORT")
+required_variables=("GIT" "BRANCH" "DOMAIN" "MAIL" "BACKEND_IP" "BACKEND_PORT" "MYSQL_PASSWORD" "MYSQL_DATABASE" "MYSQL_USER")
 for variable in "${required_variables[@]}"; do
     if [[ -z "${!variable}" ]]; then
         echo "Error: $variable must be defined in .ddeploy.env file"
@@ -36,7 +37,7 @@ done
 sub_command="$base/commands/$1/index.sh"
 if [ -f "$sub_command" ]; then
     shift
-    /usr/bin/env bash "$sub_command" "$@"
+    "$sub_command" "$@"
     exit 0
 elif command docker compose "$@" --help >/dev/null 2>&1; then
     # Check if the provided command is a valid Docker Compose command
@@ -44,6 +45,8 @@ elif command docker compose "$@" --help >/dev/null 2>&1; then
     docker compose "$@"
     exit 0
 else
-    echo "[ERROR] Unknown command: $@"
+    "$base/commands/help/index.sh"
+    echo "ddeploy: $@ is not ddeploy command."
+    echo "See 'ddeploy help'"
     exit 6
 fi
