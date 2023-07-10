@@ -24,7 +24,7 @@ token=$(cat "$base/configs/token")
 for i in {1..11}; do
     while IFS= read -r folder; do
         if [[ -n "$folder" ]] && checkEnviorment "$folder"; then
-            (bash "$base/helpers/rebuild.sh" "$folder" "$token") &
+            ($base/helpers/rebuild.sh "$folder" "$token") &
             # Store the PID of the background process
             pids+=($!)
         fi
