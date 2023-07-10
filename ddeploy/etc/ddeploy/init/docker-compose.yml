@@ -38,6 +38,8 @@ services:
     image: mysql:latest
     restart: unless-stopped
     env_file: ./.ddeploy.env
+    enviorment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
     command: --default-authentication-plugin=mysql_native_password
     volumes:
       - db:/var/lib/db
