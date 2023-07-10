@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+base="/etc/ddeploy"
 
 restore_conf(){
     log_folder="/var/tmp/ddeploy/log"
@@ -10,15 +11,23 @@ restore_conf(){
         rm -r $log_folder
     fi
     if [[ -d "$conf_folder" ]]; then
-        mv $conf_folder/* /etc/ddeploy/configs
+        mv $conf_folder/* $base/configs
         rm -r $conf_folder
     fi
 }
 
+update_conf(){
+    json_data="$base/configs/deploys.json"
+    while IFS= read -r line; do
+        folder=$(echo "$line" | jq -r '.folder')
+        cp -r $base/init/* $folder
+    done < <(jq -c '.[]' "$json_data")
+}
+
 create_cronjobs(){
     # Define the cron job commands
-    cronjob='* * * * * /etc/ddeploy/maintence/rebuilder.sh'
-    cronjob2='0 0 * * * /etc/ddeploy/maintence/cleaner.sh'
+    cronjob='* * * * * $base/maintence/rebuilder.sh'
+    cronjob2='0 0 * * * $base/maintence/cleaner.sh'
 
     # Add the cron job commands to the crontab
     (crontab -l ; echo "$cronjob" ; echo "$cronjob2") | crontab -
@@ -29,4 +38,6 @@ if [ "$1" = "configure" ]; then
     create_cronjobs
     echo "Restore configuration files ..."
     restore_conf
+    echo "Update existing ddeploy enviorment with new configuration"
+    update_conf
 fi

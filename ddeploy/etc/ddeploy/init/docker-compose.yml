@@ -38,9 +38,9 @@ services:
     image: mysql:latest
     restart: unless-stopped
     env_file: ./.ddeploy.env
-    enviorment:
-      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
     command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
     volumes:
       - db:/var/lib/db
       - ./entrypoint/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -54,17 +54,17 @@ services:
     depends_on:
       database:
         condition: service_healthy
+    ports:
+      - 3000:3000
     build:
       context: ./app
       dockerfile: Dockerfile
       args:
         - GIT=${GIT}
     restart: unless-stopped
-    ports:
-      - 3000:3000
     env_file:
       - ./.ddeploy.env
-      - ./env
+      - ./.env
     environment:
       - MYSQL_HOST=database
 
