@@ -12,11 +12,11 @@ lock_file="/tmp/doc-$name.lock"
 
     function updateCommit() {
         local commit
-        commit="$2"
+        commit="$1"
 
         # Update the commit value in the JSON file
-        jq --arg folder "$folder" --arg commit "$commit" 'map(if .folder == $folder then .commit = $commit else . end)' $base/configs/deploys.json > $base/configs/enviorments.tmp
-        mv $base/configs/enviorments.tmp $base/configs/deploys.json
+        jq --arg folder "$folder" --arg commit "$commit" 'map(if .folder == $folder then .commit = $commit else . end)' $base/configs/deploys.json > $base/configs/deploys.tmp
+        mv $base/configs/deploys.tmp $base/configs/deploys.json
     }
 
     function remove_rebuild() {
@@ -27,7 +27,7 @@ lock_file="/tmp/doc-$name.lock"
     }
 
 
-    last_commit=$(/usr/bin/env bash $base/helpers/fetchCommit.sh "$token")
+    last_commit=$($base/helpers/fetchCommit.sh "$token")
     commit=$(jq -r --arg folder "$folder" '.[] | select(.folder == $folder) | .commit' $base/configs/deploys.json)
 
     if [[ -z "$last_commit" ]] || [[ "$last_commit" == "null" ]];then
