@@ -24,17 +24,17 @@ created=$(docker inspect -f '{{.Created}}' "${NAME}-app" | date -f - +"%d-%m-%Y 
 length=${#NAME}
 printf -- "-%.0s" $(seq 1 $((55 - length)))
 printf " $NAME "
-printf -- "-%.0s" $(seq 1 $((55 - length)))
+printf -- "-%.0s" $(seq 1 $((70 - length)))
 echo
 
-printf "%-20s %-20s %-20s %-15s %-20s\n" "HTTP Status" "Docker Status" "Last build" "Branch" "Commit"
-printf "%-20s %-20s %-20s %-15s %-20s\n" "$http_status" "$docker_status" "$created" "$BRANCH" "$commit"
+printf "%-15s %-15s %-15s %-20s %-10s %-15s\n" "Domain" "HTTP Status" "Docker Status" "Last build" "Branch" "Commit"
+printf "%-15s %-15s %-15s %-20s %-10s %-15s\n" "$DOMAIN" "$http_status" "$docker_status" "$created" "$BRANCH" "$commit"
 
 # Services
 echo
-printf -- "-%.0s" {1..45}
+printf -- "-%.0s" {1..28}
 printf " Services "
-printf -- "-%.0s" {1..45}
+printf -- "-%.0s" {1..32}
 echo
 
 container_info=$(docker ps --format "{{.Names}}|{{.Image}}|{{.Status}}")
