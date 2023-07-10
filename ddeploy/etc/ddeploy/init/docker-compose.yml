@@ -37,7 +37,7 @@ services:
     container_name: mysql_db
     image: mysql:latest
     restart: unless-stopped
-    env_file: ./.env
+    env_file: ./.ddeploy.env
     command: --default-authentication-plugin=mysql_native_password
     volumes:
       - db:/var/lib/db
@@ -61,7 +61,8 @@ services:
     ports:
       - 3000:3000
     env_file:
-      - ./.env
+      - ./.ddeploy.env
+      - ./env
     environment:
       - MYSQL_HOST=database
 
