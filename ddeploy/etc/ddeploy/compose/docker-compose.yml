@@ -1,0 +1,31 @@
+services:
+  reverse_proxy:
+    image: nginx:latest
+    restart: unless-stopped
+    container_name: reverse_proxy
+    ports:
+      - 443:443
+    volumes:
+      - ./entrypoints/conf:/etc/nginx/templates
+      - certs:/etc/letsencrypt
+      - html:/usr/share/nginx/html
+    networks:
+      - ddeployer-net
+
+  reverse_proxy_http:
+    container_name: reverse_proxy_http
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./entrypoints/acme:/etc/etc/nginx/templates
+      - html:/usr/share/nginx/html
+    networks:
+      - ddeployer-net
+
+volumes:
+  certs:
+  html:
+networks:
+  ddeployer-net:
+    name: ddeployer-net

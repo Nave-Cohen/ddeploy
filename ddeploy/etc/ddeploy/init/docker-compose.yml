@@ -1,20 +1,4 @@
 services:
-  nginx:
-    image: nginx:latest
-    restart: unless-stopped
-    container_name: nginx
-    depends_on:
-      certbot:
-        condition: service_completed_successfully
-    ports:
-      - 443:443
-    env_file: ./.ddeploy.env
-    volumes:
-      - ./entrypoint/nginx.conf:/etc/nginx/templates/default.conf.template
-      - certs:/etc/letsencrypt
-    volumes_from:
-      - certbot
-
   nginx-acme:
     container_name: nginx-acme
     image: nginx:latest
@@ -22,7 +6,7 @@ services:
       - 80:80
     volumes:
       - ./entrypoint/nginx-acme.conf:/etc/etc/nginx/templates/default.conf.template
-      - html:/usr/share/nginx/html
+      - compose_html:/usr/share/nginx/html
 
   certbot:
     container_name: certbot
@@ -30,11 +14,11 @@ services:
     env_file: ./.ddeploy.env
     command: certonly --webroot -w /var/www/letsencrypt --preferred-challenges http-01 --email ${MAIL} --agree-tos -d ${DOMAIN} --non-interactive --keep-until-expiring
     volumes:
-      - html:/var/www/letsencrypt
-      - certs:/etc/letsencrypt
+      - compose_html:/var/www/letsencrypt
+      - compose_certs:/etc/letsencrypt
 
   database:
-    container_name: mysql_db
+    container_name: mysql_db-${DOMAIN}
     image: mysql:latest
     restart: unless-stopped
     env_file: ./.ddeploy.env
@@ -48,14 +32,16 @@ services:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       timeout: 20s
       retries: 10
+    networks:
+      - db-network
 
   app:
-    container_name: app
+    container_name: app-${DOMAIN}
     depends_on:
       database:
         condition: service_healthy
     ports:
-      - 3000:3000
+      - ${BACKEND_PORT}:3000
     build:
       context: ./app
       dockerfile: Dockerfile
@@ -67,8 +53,19 @@ services:
       - ./.env
     environment:
       - MYSQL_HOST=database
+    networks:
+      - ddeployer-net
+      - db-network
 
 volumes:
   db:
-  certs:
-  html:
+    name: db-${DOMAIN}
+  compose_certs:
+    external: true
+  compose_html:
+    external: true
+networks:
+  db-network:
+    name: db-network-${DOMAIN}
+  ddeployer-net:
+    external: true
