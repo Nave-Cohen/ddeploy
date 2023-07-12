@@ -37,18 +37,8 @@ echo
 
 # Services
 # Print the title with underline
-print_title 28 "Services"
+print_title 25 "Services"
 
-# Get container information
-container_info=$(docker ps --format "{{.Names}}|{{.Image}}|{{.Status}}")
-header=("Name" "Image" "Status")
-
-IFS=$'\n'
-content=()
-for info in $container_info; do
-    IFS='|' read -r name image status <<< "$info"
-    content+=("$name" "$image" "$status")
-done
-
-# Print the table
-print_table ${#header[@]} "${header[@]}" "${content[@]}"
+base='{{.Names}}\t{{.Image}}\t{{.Status}}\t'
+content=$(docker container ls --all  --filter label=com.docker.compose.project="$NAME" --format "table $base")
+echo -e "$content"

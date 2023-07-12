@@ -2,23 +2,13 @@ services:
   nginx_https:
     image: nginx:latest
     restart: unless-stopped
-    container_name: nginx_https
+    container_name: nginx
     ports:
       - 443:443
-    volumes:
-      - ./entrypoints/https/:/etc/nginx/templates
-      - certs:/etc/letsencrypt
-      - html:/usr/share/nginx/html
-    networks:
-      - ddeployer-net
-
-  nginx_http:
-    container_name: nginx_http
-    image: nginx:latest
-    ports:
       - 80:80
     volumes:
-      - ./entrypoints/http/:/etc/nginx/templates
+      - ./entrypoints/nginx_templates/:/etc/nginx/templates
+      - certs:/etc/letsencrypt
       - html:/usr/share/nginx/html
     networks:
       - ddeployer-net

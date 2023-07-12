@@ -1,10 +1,10 @@
 services:
 
   certbot:
-    container_name: certbot
+    container_name: certbot-${DOMAIN}
     image: certbot/certbot:latest
     env_file: ./.ddeploy.env
-    command: certonly --webroot -w /var/www/letsencrypt --preferred-challenges http-01 --email ${MAIL} --agree-tos -d ${DOMAIN} --non-interactive --keep-until-expiring && exit 0
+    entrypoint: sh -c 'while :; do certbot certonly --webroot -w /var/www/letsencrypt --preferred-challenges http-01 --email ${MAIL} --agree-tos -d ${DOMAIN} --non-interactive --keep-until-expiring; sleep 12h; done'
     volumes:
       - html:/var/www/letsencrypt
       - certs:/etc/letsencrypt
@@ -20,7 +20,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
     volumes:
-      - db:/var/lib/db
+      - db:/var/lib/mysql
       - ./entrypoint/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]

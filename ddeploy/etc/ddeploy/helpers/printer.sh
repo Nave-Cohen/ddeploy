@@ -65,9 +65,9 @@ print_loading(){
     else
         print "\r ✘" "err" "$msg"
         echo "\nError: $(cat "$stderr")"
-        exit 1
     fi
     echo
+    return $exitCode
 }
 
 
