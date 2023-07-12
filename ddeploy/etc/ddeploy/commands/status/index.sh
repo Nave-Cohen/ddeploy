@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 NAME=$(basename "$WORKDIR")
+source /etc/ddeploy/helpers/printer.sh
 
 commit=$(jq -r --arg folder "$WORKDIR" '.[] | select(.folder == $folder) | .commit' $base/configs/deploys.json)
 
@@ -21,27 +22,33 @@ fi
 created=$(docker inspect -f '{{.Created}}' "${NAME}-app" | date -f - +"%d-%m-%Y %H:%M")
 
 # Print the information
-length=${#NAME}
-printf -- "-%.0s" $(seq 1 $((55 - length)))
-printf " $NAME "
-printf -- "-%.0s" $(seq 1 $((70 - length)))
-echo
 
-printf "%-15s %-15s %-15s %-20s %-10s %-15s\n" "Domain" "HTTP Status" "Docker Status" "Last build" "Branch" "Commit"
-printf "%-15s %-15s %-15s %-20s %-10s %-15s\n" "$DOMAIN" "$http_status" "$docker_status" "$created" "$BRANCH" "$commit"
+# Print the title with underline
+print_title 50 "$NAME" 67
+
+# Set the header and content for the table
+header=("Domain" "HTTP Status" "Docker Status" "Last build" "Branch" "Commit")
+content=("$DOMAIN" "$http_status" "$docker_status" "$created" "$BRANCH" "$commit")
+
+# Print the table
+print_table ${#header[@]} "${header[@]}" "${content[@]}"
+
+echo
 
 # Services
-echo
-printf -- "-%.0s" {1..28}
-printf " Services "
-printf -- "-%.0s" {1..32}
-echo
+# Print the title with underline
+print_title 28 "Services"
 
+# Get container information
 container_info=$(docker ps --format "{{.Names}}|{{.Image}}|{{.Status}}")
-printf "%-20s %-30s %-20s\n" "Name" "Image" "Status"
+header=("Name" "Image" "Status")
 
 IFS=$'\n'
+content=()
 for info in $container_info; do
     IFS='|' read -r name image status <<< "$info"
-    printf "%-20s %-30s %-20s\n" "$name" "$image" "$status"
+    content+=("$name" "$image" "$status")
 done
+
+# Print the table
+print_table ${#header[@]} "${header[@]}" "${content[@]}"

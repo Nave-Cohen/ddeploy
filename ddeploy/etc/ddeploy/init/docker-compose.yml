@@ -18,7 +18,7 @@ services:
       - compose_certs:/etc/letsencrypt
 
   database:
-    container_name: mysql_db-${DOMAIN}
+    container_name: mysql-${DOMAIN}
     image: mysql:latest
     restart: unless-stopped
     env_file: ./.ddeploy.env
@@ -59,13 +59,11 @@ services:
 
 volumes:
   db:
-    name: db-${DOMAIN}
   compose_certs:
     external: true
   compose_html:
     external: true
 networks:
   db-network:
-    name: db-network-${DOMAIN}
   ddeployer-net:
     external: true

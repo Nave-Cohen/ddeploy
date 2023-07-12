@@ -26,8 +26,8 @@ update_conf(){
 
 create_cronjobs(){
     # Define the cron job commands
-    cronjob='* * * * * $base/maintence/rebuilder.sh'
-    cronjob2='0 0 * * * $base/maintence/cleaner.sh'
+    cronjob="* * * * * $base/maintence/rebuilder.sh"
+    cronjob2="0 0 * * * $base/maintence/cleaner.sh"
 
     # Add the cron job commands to the crontab
     (crontab -l ; echo "$cronjob" ; echo "$cronjob2") | crontab -
