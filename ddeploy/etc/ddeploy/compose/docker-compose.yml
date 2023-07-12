@@ -25,7 +25,9 @@ services:
 
 volumes:
   certs:
+    name: certs
   html:
+    name: html
 networks:
   ddeployer-net:
     name: ddeployer-net

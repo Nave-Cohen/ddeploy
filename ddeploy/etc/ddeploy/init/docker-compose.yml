@@ -1,21 +1,15 @@
 services:
-  nginx-acme:
-    container_name: nginx-acme
-    image: nginx:latest
-    ports:
-      - 80:80
-    volumes:
-      - ./entrypoint/nginx-acme.conf:/etc/etc/nginx/templates/default.conf.template
-      - compose_html:/usr/share/nginx/html
 
   certbot:
     container_name: certbot
     image: certbot/certbot:latest
     env_file: ./.ddeploy.env
-    command: certonly --webroot -w /var/www/letsencrypt --preferred-challenges http-01 --email ${MAIL} --agree-tos -d ${DOMAIN} --non-interactive --keep-until-expiring
+    command: certonly --webroot -w /var/www/letsencrypt --preferred-challenges http-01 --email ${MAIL} --agree-tos -d ${DOMAIN} --non-interactive --keep-until-expiring && exit 0
     volumes:
-      - compose_html:/var/www/letsencrypt
-      - compose_certs:/etc/letsencrypt
+      - html:/var/www/letsencrypt
+      - certs:/etc/letsencrypt
+    networks:
+      - ddeployer-net
 
   database:
     container_name: mysql-${DOMAIN}
@@ -59,9 +53,9 @@ services:
 
 volumes:
   db:
-  compose_certs:
+  certs:
     external: true
-  compose_html:
+  html:
     external: true
 networks:
   db-network:
