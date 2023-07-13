@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 exec > "/var/log/ddeploy/cleaner.log" 2>&1
 json_data="/etc/ddeploy/configs/deploys.json"

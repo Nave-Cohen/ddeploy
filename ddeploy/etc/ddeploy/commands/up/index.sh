@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 NAME=$(basename "$WORKDIR")
 if [[ $1 == "on" ]]; then
     if [[ ! -f "$base/configs/token" ]]; then

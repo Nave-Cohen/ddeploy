@@ -1,17 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 base="/etc/ddeploy/compose"
 conf="$DOMAIN.conf"
 template_conf="$conf.template"
+flag=0
 
-stderr=$(mktemp)
 source /etc/ddeploy/helpers/printer.sh
 
 exit_error() {
     local err_msg="$1"
-    local phase="$2"
     echo "Abort: Deploy $err_msg"
-    if [[ "$phase" == "deploy" ]]; then
+    if [ "$flag" -eq 1 ]; then
         rm "$base/entrypoints/nginx_templates/$template_conf" &> /dev/null
         docker exec nginx rm /etc/nginx/conf.d/$conf &> /dev/null
     fi
@@ -21,10 +20,13 @@ exit_error() {
 
 
 create_nginx() {
-    set -e
-    trap 'return 1' ERR
-    (envsubst '$DOMAIN,$BACKEND_IP,$BACKEND_IP,$BACKEND_PORT' < "$base/templates/https.conf" > "$base/entrypoints/nginx_templates/$template_conf") 2> /dev/null
-    docker cp "$base/entrypoints/nginx_templates/$template_conf" "nginx:/etc/nginx/conf.d/$conf" &> /dev/null
+    if ! (envsubst '$DOMAIN,$BACKEND_IP,$BACKEND_IP,$BACKEND_PORT' < "$base/templates/https.conf" > "$base/entrypoints/nginx_templates/$template_conf") 2> /dev/null; then
+        return 1
+    fi
+
+    if ! docker cp "$base/entrypoints/nginx_templates/$template_conf" "nginx:/etc/nginx/conf.d/$conf" &> /dev/null; then
+        return 1
+    fi
     return 0
 }
 
@@ -34,7 +36,7 @@ docker compose -f "$WORKDIR/docker-compose.yml" up -d
 certStatus=$(docker inspect -f '{{ .State.ExitCode }}' "certbot-$DOMAIN" 2> /dev/null)
 
 if [ "$certStatus" != "0" ]; then
-    exit_error "Failed to check Certbot status" "certbot"
+    exit_error "Failed to check Certbot status"
 fi
 
 printn "[+] Deploy 1/1" "info"
@@ -44,6 +46,7 @@ print_loading $! "Copy $DOMAIN.conf to nginx container"
 if [ "$?" -eq 0 ]; then
     echo "Deploy ended successfully"
 else
-    exit_on_error "Failed to copy ${DOMAIN}.conf to nginx container" "deploy"
+    flag=1
+    exit_error "Failed to copy ${DOMAIN}.conf to nginx container"
 fi
 

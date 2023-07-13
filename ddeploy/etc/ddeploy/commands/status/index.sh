@@ -1,44 +1,14 @@
 #!/usr/bin/env bash
-NAME=$(basename "$WORKDIR")
 source /etc/ddeploy/helpers/printer.sh
+source /etc/ddeploy/helpers/status.sh
 
-commit=$(jq -r --arg folder "$WORKDIR" '.[] | select(.folder == $folder) | .commit' $base/configs/deploys.json)
+# Print title
+print_title 50 "$(basename $WORKDIR)" 67
+# Print project headers
+printf "%-20s %-20s %-20s %-15s %-20s\n" "HTTP Status" "Docker Status" "Last build" "Branch" "Commit"
 
-# Get Docker status
-docker_status=$(docker compose ls | awk -v project="$NAME" '$1 == project {print $2}')
-if [[ -z $docker_status ]]; then
-    docker_status="Not running"
-fi
+# Print project status
+projectStatus "$WORKDIR"
 
-# Get HTTP status
-http_status=$(curl -s -o /dev/null -w "%{http_code}" "https://$DOMAIN")
-if [[ $http_status == "200" || $http_status == "302" ]]; then
-    http_status="200/OK"
-else
-    http_status="$http_status/ERROR"
-fi
-
-# Get creation timestamp
-created=$(docker inspect -f '{{.Created}}' "${NAME}-app" | date -f - +"%d-%m-%Y %H:%M")
-
-# Print the information
-
-# Print the title with underline
-print_title 50 "$NAME" 67
-
-# Set the header and content for the table
-header=("Domain" "HTTP Status" "Docker Status" "Last build" "Branch" "Commit")
-content=("$DOMAIN" "$http_status" "$docker_status" "$created" "$BRANCH" "$commit")
-
-# Print the table
-print_table ${#header[@]} "${header[@]}" "${content[@]}"
-
-echo
-
-# Services
-# Print the title with underline
-print_title 25 "Services"
-
-base='{{.Names}}\t{{.Image}}\t{{.Status}}\t'
-content=$(docker container ls --all  --filter label=com.docker.compose.project="$NAME" --format "table $base")
-echo -e "$content"
+# Print the status of project services
+servicesStatus "$WORKDIR"

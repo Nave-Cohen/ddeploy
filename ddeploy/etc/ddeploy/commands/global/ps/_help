@@ -1,0 +1,13 @@
+This command retrieves the status of all the web applications and displays the information in a formatted table.
+
+Usage: ddeploy ps
+
+Example output:
+
+                                                  taskify                                                                   
+Domain          HTTP Status   Docker Status   Last build        Branch     Commit                                  
+example.com     200/OK          running(3)        11-07-2023 07:32     main       kdo123maoz0002kkkfaow00fa000rsz333ma0fa
+
+                                                  test                                                                   
+Domain         HTTP Status     Docker Status     Last build           Branch    Commit                                  
+nave.autos     502/ERROR       Not running       11-07-2023 07:32     dev       kdo123maoz0002kkkfaow00fa000rsz333ma0fa

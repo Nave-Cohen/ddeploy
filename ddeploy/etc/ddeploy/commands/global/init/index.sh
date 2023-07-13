@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
+source $base/helpers/json.sh
 
 # Check if the current directory is already a runner environment
-folder=$("$base/helpers/isWorkdir.sh")
-if [[ -n $folder ]]; then
-    echo "$(basename "$folder") is Already a runner environment"
+if isWorkdir $WORKDIR; then
+    echo "$(basename "$WORKDIR") is Already a runner environment"
     exit 1
 fi
 
@@ -15,14 +15,23 @@ if [ $# -lt 2 ]; then
     echo "[ERROR] - doc init [github url] [branch name]"
     exit 1
 fi
+
 GIT="$1"
 GIT_URL="${1%.git}"
 BRANCH="$2"
-git_status=$(curl -s -o /dev/null -w "%{http_code}" "$GIT_URL/tree/$BRANCH")
 
 # Check if the GitHub URL and branch exist
+git_status=$(curl -s -o /dev/null -w "%{http_code}" "$GIT_URL/tree/$BRANCH")
 if [[ $git_status != "200" ]] ; then
     echo "[ERROR] - github url or branch-name are wrong."
+    exit 1
+fi
+source "$base/helpers/repo"
+
+# Extract repository and commit information
+commit=$(fetchCommit "$PWD")
+if [[ -z "$commit" ]]; then
+    echo -e "Faild to fetch branch commit\naAbort!"
     exit 1
 fi
 
@@ -44,16 +53,7 @@ if [[ ! -f ".ddeploy.env" ]]; then
     echo ".ddeploy.env must be edited."
 fi
 
-export $(grep -v '^#' ".ddeploy.env" | xargs)
-
-# Extract repository and commit information
-last_commit=$($base/helpers/fetchCommit.sh)
-
 # Update the JSON file with the new item
-json_file="$base/configs/deploys.json"
-new_item=$(jq -n --arg folder "$PWD" --arg commit "$last_commit" '{"folder": $folder, "commit": $commit}')
-jq --argjson new_item "$new_item" '. + [$new_item]' "$json_file" > "$json_file.tmp" && \
-mv "$json_file.tmp" "$json_file"
-
-# Print success message
+addProject "$PWD" "$commit"
+ # Print success message
 echo "Runner environment initialized successfully."
