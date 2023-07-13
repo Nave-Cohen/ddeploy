@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-exec > "/var/log/ddeploy/cleaner.log" 2>&1
+exec &>>"/var/log/ddeploy/cleaner.log"
 json_data="/etc/ddeploy/configs/deploys.json"
 filtered_json="["
 
@@ -13,8 +13,8 @@ while IFS= read -r line; do
     filtered_json="$filtered_json$line,"
 done < <(jq -c '.[]' "$json_data")
 
-filtered_json="${filtered_json%,}"  # Remove the trailing comma
+filtered_json="${filtered_json%,}" # Remove the trailing comma
 filtered_json="$filtered_json]"
 
 final_json=$(echo "$filtered_json" | jq -c .)
-echo "$final_json" > "$json_data" 
+echo "$final_json" >"$json_data"
