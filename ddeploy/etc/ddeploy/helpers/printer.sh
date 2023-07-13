@@ -2,25 +2,29 @@
 
 # prints colored text
 print () {
+    local text=$1
+    local color=$2
+    local extra_text=${3:-""}
+    local type="$extra_text"
     # Check the type of formatting required
-    if [ "$3" == "b" ]; then
+    if [ "$type" == "b" ]; then
         type=1
-    elif [ "$3" == "u" ]; then
+    elif [ "$type" == "u" ]; then
         type=4
-    elif [ "$3" == "b&u" ]; then
+    elif [ "$type" == "b&u" ]; then
         type="1;4"
     else
         type=0
     fi
     
     # Set the color based on the provided type
-    if [ "$2" == "info" ] ; then
+    if [ "$color" == "info" ] ; then
         COLOR="$type;34m";
-    elif [ "$2" == "succ" ] ; then
+    elif [ "$color" == "succ" ] ; then
         COLOR="$type;32m";
-    elif [ "$2" == "warn" ] ; then
+    elif [ "$color" == "warn" ] ; then
         COLOR="$type;33m";
-    elif [ "$2" == "err" ] ; then
+    elif [ "$color" == "err" ] ; then
         COLOR="$type;31m";
     else #default color
         COLOR="0m";
@@ -30,11 +34,7 @@ print () {
     ENDCOLOR="\e[0m";
     
     # Print the text with the specified formatting
-    if [ "$type" == 0 ] && [[ -n "$3" ]]; then
-        printf "$STARTCOLOR$1$ENDCOLOR $3";
-    else
-        printf "$STARTCOLOR$1$ENDCOLOR";
-    fi
+    printf "$STARTCOLOR$1$ENDCOLOR $extra_text";
 }
 
 printn(){
@@ -43,32 +43,32 @@ printn(){
     echo
 }
 
-print_loading(){
+print_loading() {
     pid=$1
-    msg="$2"
-    if [[ -n "$3" ]]; then stderr="$3"; fi
+    msg=$2
     frames=("⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏")
     len=${#frames[@]}
-    i=1
-    
+    i=0
+
     # Loop until the process is completed
-    while kill -0 $pid 2> /dev/null;
-    do
-        printf "\r ${frames[$i]} $msg" 
+    while kill -0 "$pid" 2>/dev/null; do
+        printf "\r%s %s" "${frames[i]}" "$msg"
         sleep 0.2
-        i=$(( 1 + i % $len ))
+        i=$(( (i + 1) % len ))
     done
-    
-    wait $!; exitCode=$?
-    if [ $exitCode -eq 0 ]; then
-        print "\r ✔" "succ" "$msg"
+
+    wait "$pid"
+    exitCode=$?
+
+    if [ "$exitCode" -eq 0 ]; then
+        print "\r ✔ %s" "succ" "$msg"
     else
-        print "\r ✘" "err" "$msg"
-        echo "\nError: $(cat "$stderr")"
+        print "\r ✘ %s" "err" "$msg"
     fi
     echo
-    return $exitCode
+    return "$exitCode"
 }
+
 
 
 print_nchar() {

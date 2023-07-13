@@ -15,7 +15,7 @@ if [ $# -lt 2 ]; then
     echo "[ERROR] - doc init [github url] [branch name]"
     exit 1
 fi
-
+GIT="$1"
 GIT_URL="${1%.git}"
 BRANCH="$2"
 git_status=$(curl -s -o /dev/null -w "%{http_code}" "$GIT_URL/tree/$BRANCH")
@@ -27,15 +27,19 @@ if [[ $git_status != "200" ]] ; then
 fi
 
 # Copy necessary files from $base/init/
-cp -r $base/init/. .
+cp -r $base/init/docker-compose.yml .
 echo + docker-compose.yml
+cp -r $base/init/app .
 echo + app/Dockerfile
+cp -r $base/init/entrypoint .
 echo + entrypoint
 
 
 # Create .ddeploy.env file
 if [[ ! -f ".ddeploy.env" ]]; then
-    echo -e "GIT=$1\nBRANCH=$2\nDOMAIN=#example.com\nMAIL=\nBACKEND_IP=\nBACKEND_PORT=3000\nMYSQL_USER=#USERNAME\nMYSQL_PASSWORD=#PASSWORD\nMYSQL_DATABASE=#DB_NAME\n" > .ddeploy.env
+    cp -r $base/init/.ddeploy.env .
+    sed -i "s|^GIT=.*|GIT=$GIT|" .ddeploy.env
+    sed -i "s/^BRANCH=.*/BRANCH=$BRANCH/" .ddeploy.env
     echo "+ .ddeploy.env"
     echo ".ddeploy.env must be edited."
 fi

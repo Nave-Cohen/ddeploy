@@ -44,7 +44,6 @@ services:
     restart: unless-stopped
     env_file:
       - ./.ddeploy.env
-      - ./.env
     environment:
       - MYSQL_HOST=database
     networks:

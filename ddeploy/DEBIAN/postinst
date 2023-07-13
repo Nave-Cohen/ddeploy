@@ -20,7 +20,11 @@ update_conf(){
     json_data="$base/configs/deploys.json"
     while IFS= read -r line; do
         folder=$(echo "$line" | jq -r '.folder')
-        cp -r $base/init/* $folder
+        if [[ -d $folder ]]; then
+            cp -r $base/init/app $folder
+            cp -r $base/init/entrypoint $folder
+            cp -r $base/init/docker-compose.yml $folder
+        fi
     done < <(jq -c '.[]' "$json_data")
 }
 
