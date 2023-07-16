@@ -1,11 +1,18 @@
 base=/etc/ddeploy
 source /etc/ddeploy/helpers/json.sh
 
-fetchCommit(){
+fetchCommit() {
     local token_path="$base/configs/token"
     local project="$1"
-    local branch=$(grep 'BRANCH=' $project/.ddeploy.env | cut -d'=' -f2-)
-    local repo=$(grep 'GIT=' $project/.ddeploy.env | cut -d'=' -f2- | sed -e 's#.*github.com/##' -e 's#\.git$##')
+    local branch
+    local repo
+    if [[ $# -lt 3 ]]; then
+        branch=$(grep 'BRANCH=' $project/.ddeploy.env | cut -d'=' -f2-)
+        repo=$(grep 'GIT=' $project/.ddeploy.env | cut -d'=' -f2- | sed -e 's#.*github.com/##' -e 's#\.git$##')
+    else
+        repo="$2"
+        branch="$3"
+    fi
     local api_url="https://api.github.com/repos/$repo/git/refs/heads/$branch"
 
     local response
@@ -17,7 +24,7 @@ fetchCommit(){
     response=$(echo "$response" | jq -r '.object.sha')
 
     if [[ "$response" == "null" ]]; then
-        echo 
+        echo
     else
         echo "$response"
     fi

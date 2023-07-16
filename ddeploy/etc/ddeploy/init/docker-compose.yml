@@ -35,7 +35,7 @@ services:
       database:
         condition: service_healthy
     ports:
-      - ${BACKEND_PORT}:3000
+      - "127.0.0.0:${BACKEND_PORT}:3000"
     build:
       context: ./app
       dockerfile: Dockerfile

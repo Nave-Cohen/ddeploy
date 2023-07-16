@@ -29,7 +29,7 @@ projectStatus() {
     # Get creation timestamp
     created=$(docker inspect -f '{{.Created}}' "${NAME}-app" | date -f - +"%d-%m-%Y %H:%M")
     if [ "$meta" == "all" ]; then
-        printf "%-10s %-20s %-20s %-20s %-15s %-20s\n" "$NAME" "$http_status" "$docker_status" "$created" "$BRANCH" "$commit"
+        printf "%-20s %-20s %-20s %-20s %-15s %-20s\n" "$NAME" "$http_status" "$docker_status" "$created" "$BRANCH" "$commit"
     else
         printf "%-20s %-20s %-20s %-15s %-20s\n" "$http_status" "$docker_status" "$created" "$BRANCH" "$commit"
     fi
