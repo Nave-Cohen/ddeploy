@@ -12,7 +12,7 @@ $base/maintence/cleaner.sh
 
 # Check if the required arguments are provided
 if [ $# -lt 2 ]; then
-    echo "[ERROR] - doc init [github url] [branch name]"
+    echo "[ERROR] - ddeploy init [github url] [branch name]"
     exit 1
 fi
 
@@ -22,14 +22,15 @@ BRANCH="$2"
 
 # Check if the GitHub URL and branch exist
 git_status=$(curl -s -o /dev/null -w "%{http_code}" "$GIT_URL/tree/$BRANCH")
-if [[ $git_status != "200" ]] ; then
+if [[ $git_status != "200" ]]; then
     echo "[ERROR] - github url or branch-name are wrong."
     exit 1
 fi
-source "$base/helpers/repo"
+source "$base/helpers/repo.sh"
 
 # Extract repository and commit information
-commit=$(fetchCommit "$PWD")
+commit=$(fetchCommit "$PWD" "$GIT" "$BRANCH")
+echo $commit
 if [[ -z "$commit" ]]; then
     echo -e "Faild to fetch branch commit\naAbort!"
     exit 1
@@ -43,7 +44,6 @@ echo + app/Dockerfile
 cp -r $base/init/entrypoint .
 echo + entrypoint
 
-
 # Create .ddeploy.env file
 if [[ ! -f ".ddeploy.env" ]]; then
     cp -r $base/init/.ddeploy.env .
@@ -55,5 +55,5 @@ fi
 
 # Update the JSON file with the new item
 addProject "$PWD" "$commit"
- # Print success message
+# Print success message
 echo "Runner environment initialized successfully."

@@ -1,20 +1,13 @@
 #!/usr/bin/env bash
 
 exec &>>"/var/log/ddeploy/cleaner.log"
-json_data="/etc/ddeploy/configs/deploys.json"
-filtered_json="["
+base="/etc/ddeploy"
+source $base/helpers/json.sh
 
-while IFS= read -r line; do
-    folder=$(echo "$line" | jq -r '.folder')
-    if [ ! -d "$folder" ] || [ ! -f "$folder/.ddeploy.env" ]; then
-        echo "$(basename "$folder") removed because .ddeploy.env not found or folder removed"
-        continue
+folders=$(getAll "folder")
+read -a folders < <(getAll "folder")
+for folder in "${folders[@]}"; do
+    if ! isWorkdir "$folder"; then
+        rmProject "$folder"
     fi
-    filtered_json="$filtered_json$line,"
-done < <(jq -c '.[]' "$json_data")
-
-filtered_json="${filtered_json%,}" # Remove the trailing comma
-filtered_json="$filtered_json]"
-
-final_json=$(echo "$filtered_json" | jq -c .)
-echo "$final_json" >"$json_data"
+done
