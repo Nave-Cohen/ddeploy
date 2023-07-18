@@ -31,7 +31,8 @@ create_nginx() {
     fi
     return 0
 }
-
+export GIT="$(getItem "$WORKDIR" git)"
+export BRANCH="$(getItem "$WORKDIR" branch)"
 export BACKEND_PORT="$(getItem "$WORKDIR" port)"
 docker compose -f "$WORKDIR/docker-compose.yml" up --build -d
 

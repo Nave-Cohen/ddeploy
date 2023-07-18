@@ -11,7 +11,7 @@ projectStatus() {
     export $(grep -v '^#' "$folder/.ddeploy.env" | xargs)
     local NAME=$(basename "$folder")
     commit=$(getItem "$folder" "commit")
-
+    branch=$(getItem "$folder" "branch")
     # Get Docker status
     docker_status=$(docker compose ls | awk -v project="$NAME" '$1 == project {print $2}')
     if [[ -z $docker_status ]]; then
@@ -29,9 +29,9 @@ projectStatus() {
     # Get creation timestamp
     created=$(docker inspect -f '{{.Created}}' "${NAME}-app" | date -f - +"%d-%m-%Y %H:%M")
     if [ "$meta" == "all" ]; then
-        printf "%-20s %-20s %-20s %-20s %-15s %-20s\n" "$NAME" "$http_status" "$docker_status" "$created" "$BRANCH" "$commit"
+        printf "%-20s %-20s %-20s %-20s %-15s %-20s\n" "$NAME" "$http_status" "$docker_status" "$created" "$branch" "$commit"
     else
-        printf "%-20s %-20s %-20s %-15s %-20s\n" "$http_status" "$docker_status" "$created" "$BRANCH" "$commit"
+        printf "%-20s %-20s %-20s %-15s %-20s\n" "$http_status" "$docker_status" "$created" "$branch" "$commit"
     fi
 }
 

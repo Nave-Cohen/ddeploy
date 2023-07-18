@@ -47,13 +47,11 @@ echo + entrypoint
 # Create .ddeploy.env file
 if [[ ! -f ".ddeploy.env" ]]; then
     cp -r $base/init/.ddeploy.env .
-    sed -i "s|^GIT=.*|GIT=$GIT|" .ddeploy.env
-    sed -i "s/^BRANCH=.*/BRANCH=$BRANCH/" .ddeploy.env
     echo "+ .ddeploy.env"
     echo ".ddeploy.env must be edited."
 fi
 
 # Update the JSON file with the new item
-addProject "$PWD" "$commit"
+addProject "$PWD" "$commit" "$GIT" "$BRANCH"
 # Print success message
 echo "Runner environment initialized successfully."

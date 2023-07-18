@@ -23,7 +23,7 @@ if ! isWorkdir $WORKDIR; then
 fi
 
 export $(grep -v '^#' "$WORKDIR/.ddeploy.env" | xargs)
-required_variables=("GIT" "BRANCH" "DOMAIN" "MAIL" "APP_PORT" "MYSQL_PASSWORD" "MYSQL_DATABASE" "MYSQL_USER")
+required_variables=("DOMAIN" "MAIL" "APP_PORT" "MYSQL_PASSWORD" "MYSQL_DATABASE" "MYSQL_USER")
 for variable in "${required_variables[@]}"; do
     if [[ -z "${!variable}" ]]; then
         echo "Error: $variable must be defined in .ddeploy.env file"

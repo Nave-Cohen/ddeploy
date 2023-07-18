@@ -7,8 +7,8 @@ fetchCommit() {
     local branch
     local repo
     if [[ $# -lt 3 ]]; then
-        branch=$(grep 'BRANCH=' $project/.ddeploy.env | cut -d'=' -f2-)
-        repo=$(grep 'GIT=' $project/.ddeploy.env | cut -d'=' -f2- | sed -e 's#.*github.com/##' -e 's#\.git$##')
+        git="$(getItem "$WORKDIR" git)"
+        branch="$(getItem "$WORKDIR" branch)"
     else
         repo="$2"
         branch="$3"
@@ -41,4 +41,13 @@ isUpdated() {
         setItem "$project" "commit" "$last_commit"
         return 0
     fi
+}
+checkRepo() {
+    local GIT_URL="${1%.git}"
+    local BRANCH="$2"
+    git_status=$(curl -s -o /dev/null -w "%{http_code}" "$GIT_URL/tree/$BRANCH")
+    if [[ $git_status != "200" ]]; then
+        return 1
+    fi
+    return 0
 }
