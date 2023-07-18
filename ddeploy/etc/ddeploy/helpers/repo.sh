@@ -7,12 +7,13 @@ fetchCommit() {
     local branch
     local repo
     if [[ $# -lt 3 ]]; then
-        git="$(getItem "$WORKDIR" git)"
-        branch="$(getItem "$WORKDIR" branch)"
+        repo="$(getItem "$project" git)"
+        branch="$(getItem "$project" branch)"
     else
         repo="$2"
         branch="$3"
     fi
+    repo=$(echo "$repo" | sed -e 's#.*github.com/##' -e 's#\.git$##')
     local api_url="https://api.github.com/repos/$repo/git/refs/heads/$branch"
 
     local response
