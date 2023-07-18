@@ -1,0 +1,12 @@
+[Unit]
+Description=Docker Script Service
+After=docker.service
+
+[Service]
+ExecStart=/etc/ddeploy/compose/deploy.sh
+ExecStop=/etc/ddeploy/compose/deploy.sh "stop"
+WorkingDirectory=/etc/ddeploy/compose
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
