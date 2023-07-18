@@ -14,6 +14,7 @@ elif [[ $? -eq 2 ]]; then
     sed -i "$folder/d" "$list_file"
 else
     export $(grep -v '^#' "$folder/.ddeploy.env" | xargs)
-    docker compose -f "$folder/docker-compose.yml" up -d >>"$build_log" 2>&1
+    export WORKDIR="$folder"
+    /etc/ddeploy/helpers/deploy.sh >>"$build_log" 2>&1
     echo "$name - rebuilt successfully - $(date +'%d/%m/%Y %H:%M:%S')"
 fi

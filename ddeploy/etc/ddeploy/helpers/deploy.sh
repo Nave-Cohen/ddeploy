@@ -38,7 +38,7 @@ docker compose -f "$WORKDIR/docker-compose.yml" up --build -d
 certStatus=$(docker inspect -f '{{ .State.ExitCode }}' "certbot-$DOMAIN" 2>/dev/null)
 
 if [ "$certStatus" != "0" ]; then
-    exit_error "Failed to check Certbot status"
+    exit_error "Faild on certificate domain"
 fi
 
 printn "[+] Deploy 1/1" "info"

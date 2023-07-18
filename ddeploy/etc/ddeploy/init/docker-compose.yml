@@ -4,8 +4,10 @@ services:
     container_name: certbot-${DOMAIN}
     image: certbot/certbot:latest
     env_file: ./.ddeploy.env
-    entrypoint: sh -c 'while :; do certbot certonly --webroot -w /var/www/letsencrypt --preferred-challenges http-01 --email ${MAIL} --agree-tos -d ${DOMAIN} --non-interactive --keep-until-expiring; sleep 12h; done'
+    entrypoint: [ "/bin/sh", "-c" ]
+    command: chmod +x /cert.sh && /cert.sh
     volumes:
+      - ./entrypoint/cert.sh:/cert.sh
       - html:/var/www/letsencrypt
       - certs:/etc/letsencrypt
     networks:
