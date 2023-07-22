@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
-remove_old_cron(){
+remove_old_cron() {
     crontab -l | grep -vF '/etc/ddeploy/maintence/rebuilder.sh' | crontab -
     crontab -l | grep -vF '/etc/ddeploy/maintence/cleaner.sh' | crontab -
 }
 
-backup_old_conf(){
+backup_old_conf() {
     log_folder="/var/tmp/ddeploy/log"
     conf_folder="/var/tmp/ddeploy/conf"
     if [[ ! -d "$log_folder" ]]; then

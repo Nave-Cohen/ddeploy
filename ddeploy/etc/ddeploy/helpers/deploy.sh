@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 base="/etc/ddeploy/compose"
-conf="$DOMAIN.conf"
+conf="$NAME.conf"
 template_conf="$conf.template"
 flag=0
 
@@ -38,19 +38,19 @@ if [ "$?" != "0" ]; then
     exit_error "Faild on docker compose up --build -d"
 fi
 
-certStatus=$(docker inspect -f '{{ .State.ExitCode }}' "certbot-$DOMAIN" 2>/dev/null)
+certStatus=$(docker inspect -f '{{ .State.ExitCode }}' "certbot-$NAME" 2>/dev/null)
 if [ "$certStatus" != "0" ]; then
     exit_error "Faild on certificate domain"
 fi
 
 printn "[+] Deploy 1/1" "info"
-create_nginx "$DOMAIN" &
-print_loading $! "Copy $DOMAIN.conf to nginx container"
+create_nginx "$NAME" &
+print_loading $! "Copy $NAME.conf to nginx container"
 
 if [ "$?" -eq 0 ]; then
     docker exec nginx nginx -s reload &>/dev/null
     echo "Deploy ended successfully"
 else
     flag=1
-    exit_error "Failed to copy ${DOMAIN}.conf to nginx container"
+    exit_error "Failed to copy ${NAME}.conf to nginx container"
 fi

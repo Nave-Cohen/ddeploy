@@ -1,7 +1,7 @@
 services:
 
   certbot:
-    container_name: certbot-${DOMAIN}
+    container_name: certbot-${NAME}
     image: certbot/certbot:latest
     env_file: ./.ddeploy.env
     entrypoint: sh -c 'while :; do certbot certonly --webroot -w /var/www/letsencrypt --preferred-challenges http-01 --email ${MAIL} --agree-tos -d ${DOMAIN} --non-interactive --keep-until-expiring; sleep 12h; done'
@@ -12,7 +12,7 @@ services:
       - ddeployer-net
 
   database:
-    container_name: mysql-${DOMAIN}
+    container_name: mysql-${NAME}
     image: mysql:latest
     restart: unless-stopped
     env_file: ./.ddeploy.env
@@ -30,7 +30,7 @@ services:
       - db-network
 
   app:
-    container_name: app-${DOMAIN}
+    container_name: app-${NAME}
     depends_on:
       database:
         condition: service_healthy

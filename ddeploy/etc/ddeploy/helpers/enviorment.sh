@@ -21,4 +21,5 @@ load_vars() {
     export GIT="$(getItem "$WORKDIR" git)"
     export BRANCH="$(getItem "$WORKDIR" branch)"
     export BACKEND_PORT="$(getItem "$WORKDIR" port)"
+    export NAME="$(basename "$WORKDIR")"
 }

@@ -34,5 +34,7 @@ fi
 if [[ $# -lt 1 ]]; then
     $base/helpers/deploy.sh
 else
-    cat ./_help
+    script_path=$(readlink -f "$0")
+    script_directory=$(dirname "$script_path")
+    cat $script_directory/_help
 fi
