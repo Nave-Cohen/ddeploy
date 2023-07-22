@@ -2,8 +2,8 @@
 
 export base="/etc/ddeploy"
 export WORKDIR="$PWD"
-export MAIN_DIR="$base"
 source $base/helpers/json.sh
+source $base/helpers/enviorment.sh
 
 if [ "$#" -lt 1 ]; then
     echo "[ERROR] No command set"
@@ -19,17 +19,12 @@ fi
 
 if ! isWorkdir $WORKDIR; then
     echo "$(basename "$WORKDIR") is not a runner environment"
-    exit 6
+    exit 1
 fi
 
-export $(grep -v '^#' "$WORKDIR/.ddeploy.env" | xargs)
-required_variables=("DOMAIN" "MAIL" "APP_PORT" "MYSQL_PASSWORD" "MYSQL_DATABASE" "MYSQL_USER")
-for variable in "${required_variables[@]}"; do
-    if [[ -z "${!variable}" ]]; then
-        echo "Error: $variable must be defined in .ddeploy.env file"
-        exit 1
-    fi
-done
+if ! load_vars $WORKDIR; then
+    exit 1
+fi
 
 sub_command="$base/commands/$1/index.sh"
 if [ -f "$sub_command" ]; then

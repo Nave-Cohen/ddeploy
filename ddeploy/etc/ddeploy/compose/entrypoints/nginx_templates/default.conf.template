@@ -4,7 +4,5 @@ server {
     location /.well-known/acme-challenge{
         root /usr/share/nginx/html;
     }
-    location / {
-        return 301 https://$host$request_uri;
-    }
+    return 404;
 }

@@ -13,8 +13,6 @@ elif [[ $? -eq 2 ]]; then
     echo -e "Error: GitHub api error, try to check token\nRemove $name from autobuild"
     sed -i "$folder/d" "$list_file"
 else
-    export $(grep -v '^#' "$folder/.ddeploy.env" | xargs)
-    export WORKDIR="$folder"
-    /etc/ddeploy/helpers/deploy.sh >>"$build_log" 2>&1
+    cd $folder && /usr/local/bin/ddeploy "up" "-d" &>>"$build_log"
     echo "$name - rebuilt successfully - $(date +'%d/%m/%Y %H:%M:%S')"
 fi

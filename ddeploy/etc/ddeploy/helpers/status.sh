@@ -8,7 +8,9 @@ projectStatus() {
     folder="$1"
     meta="$2"
 
-    export $(grep -v '^#' "$folder/.ddeploy.env" | xargs)
+    set -a
+    . "$folder/.ddeploy.env"
+    set +a
     local NAME=$(basename "$folder")
     commit=$(getItem "$folder" "commit")
     branch=$(getItem "$folder" "branch")

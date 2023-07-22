@@ -20,24 +20,25 @@ exit_error() {
 }
 
 create_nginx() {
-    export SERVICE="app-$DOMAIN"
-
-    if ! (envsubst '$DOMAIN,$SERVICE,$BACKEND_PORT' <"$base/templates/https.conf" >"$base/entrypoints/nginx_templates/$template_conf") 2>/dev/null; then
+    if ! (envsubst '$DOMAIN,$BACKEND_PORT' <"$base/templates/https.conf" >"$base/entrypoints/nginx_templates/$template_conf") 2>/dev/null; then
         return 1
     fi
 
     if ! docker cp "$base/entrypoints/nginx_templates/$template_conf" "nginx:/etc/nginx/conf.d/$conf" &>/dev/null; then
         return 1
     fi
+    if ! docker exec nginx nginx -t &>/dev/null; then
+        return 1
+    fi
     return 0
 }
-export GIT="$(getItem "$WORKDIR" git)"
-export BRANCH="$(getItem "$WORKDIR" branch)"
-export BACKEND_PORT="$(getItem "$WORKDIR" port)"
+
 docker compose -f "$WORKDIR/docker-compose.yml" up --build -d
+if [ "$?" != "0" ]; then
+    exit_error "Faild on docker compose up --build -d"
+fi
 
 certStatus=$(docker inspect -f '{{ .State.ExitCode }}' "certbot-$DOMAIN" 2>/dev/null)
-
 if [ "$certStatus" != "0" ]; then
     exit_error "Faild on certificate domain"
 fi
@@ -47,6 +48,7 @@ create_nginx "$DOMAIN" &
 print_loading $! "Copy $DOMAIN.conf to nginx container"
 
 if [ "$?" -eq 0 ]; then
+    docker exec nginx nginx -s reload &>/dev/null
     echo "Deploy ended successfully"
 else
     flag=1

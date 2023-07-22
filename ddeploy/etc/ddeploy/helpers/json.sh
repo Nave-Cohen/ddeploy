@@ -1,17 +1,13 @@
 json_file="/etc/ddeploy/configs/deploys.json"
 
 isWorkdir() {
-    local workdir="$1"
-
-    if [ -z "$workdir" ] || [[ ! -d "$workdir" ]] || [ ! -f "$workdir/.ddeploy.env" ]; then
-        return 1
-    fi
-
-    folder=$(jq -r --arg search "$workdir" '.[] | select(.folder == $search) | .folder' "$json_file")
-
-    if [ -z "$folder" ]; then
+    # If the input is not a valid directory path, assume it's a basename and search in the JSON data
+    local WORKDIR="$1"
+    local folder=$(jq -r --arg search "$WORKDIR" 'map(select(.folder | endswith($search))) | .[0].folder' "$json_file")
+    if [ -z "$folder" ] || [ ! -d "$folder" ] || [ ! -f "$folder/.ddeploy.env" ]; then
         return 1
     else
+        echo $folder
         return 0
     fi
 }
@@ -66,7 +62,7 @@ getFreePort() {
 
 get_max() {
     local array=("$@")
-    local max=${array[0]}
+    local max=2999
     for num in "${array[@]}"; do
         if ((num > max)); then
             max=$num

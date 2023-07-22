@@ -35,12 +35,14 @@ services:
       database:
         condition: service_healthy
     ports:
-      - "127.0.0.0:${BACKEND_PORT}:3000"
+      - "${BACKEND_PORT}:3000"
     build:
       context: ./app
       dockerfile: Dockerfile
       args:
         - GIT=${GIT}
+        - BUILD=${BUILD}
+        - RUN=${RUN}
     restart: unless-stopped
     env_file:
       - ./.ddeploy.env
