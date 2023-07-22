@@ -22,10 +22,10 @@ if [ $# -gt 0 ]; then
             echo "  - $(basename "$folder")..."
             down "$folder"
         done
-    elif folder=$(isWorkdir $1); then
+    elif isWorkdir $1; then
         # Stop and remove containers from the specified ddeploy project.
-        echo "Stop and remove containers from $(basename "$folder")..."
-        down "$folder"
+        echo "Stop and remove containers from $(basename "$WORKDIR")..."
+        down "$WORKDIR"
     else
         echo "$1 is not a ddeploy environment."
         exit 1

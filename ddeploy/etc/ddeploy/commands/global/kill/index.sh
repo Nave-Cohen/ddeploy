@@ -6,7 +6,7 @@ _kill() {
     load_vars $folder
     local conf="$DOMAIN.conf"
     local template_conf="$conf.template"
-    rm "$base/entrypoints/nginx_templates/$template_conf" &>/dev/null
+    rm "$base/compose/entrypoints/nginx_templates/$template_conf" &>/dev/null
     docker exec nginx rm /etc/nginx/conf.d/$conf &>/dev/null && nginx -s reload &>/dev/null
     docker compose -f "$folder/docker-compose.yml" down
 }
@@ -20,9 +20,9 @@ if [ $# -gt 0 ]; then
             echo "  - $(basename "$folder")"
             _kill "$folder"
         done
-    elif folder=$(isWorkdir $1); then
-        echo "Stop and kill containers from $(basename "$folder")..."
-        _kill $folder
+    elif isWorkdir $1; then
+        echo "Stop and kill containers from $(basename "$WORKDIR")..."
+        _kill $WORKDIR
     else
         echo "$1 is not ddeploy enviorment."
         exit 1

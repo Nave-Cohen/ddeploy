@@ -2,12 +2,12 @@ json_file="/etc/ddeploy/configs/deploys.json"
 
 isWorkdir() {
     # If the input is not a valid directory path, assume it's a basename and search in the JSON data
-    local WORKDIR="$1"
+    WORKDIR="$1"
     local folder=$(jq -r --arg search "$WORKDIR" 'map(select(.folder | endswith($search))) | .[0].folder' "$json_file")
     if [ -z "$folder" ] || [ ! -d "$folder" ] || [ ! -f "$folder/.ddeploy.env" ]; then
         return 1
     else
-        echo $folder
+        export WORKDIR="$folder"
         return 0
     fi
 }
