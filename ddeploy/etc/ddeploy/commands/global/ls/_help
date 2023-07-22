@@ -1,0 +1,9 @@
+This command retrieves the status of all the web applications and displays the information in a formatted table.
+
+Usage: ddeploy ls
+
+Example output:
+
+Project     HTTP Status          Docker Status        Last build           Branch          Commit              
+example     200/OK               running(3)           11-07-2023 07:32     main            kdo123maoz0002kkkfaow00fa000rsz333ma0fa
+example2    502/ERROR            Not running          11-07-2023 07:32     main            kdo123maoz0002kkkfaow00fa000rsz333ma0fa

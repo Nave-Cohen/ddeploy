@@ -1,74 +1,64 @@
 services:
-  nginx:
-    image: nginx:latest
-    restart: unless-stopped
-    container_name: nginx
-    depends_on:
-      certbot:
-        condition: service_completed_successfully
-    ports:
-      - 443:443
-    env_file: ./.ddeploy.env
-    volumes:
-      - ./entrypoint/nginx.conf:/etc/nginx/templates/default.conf.template
-      - certs:/etc/letsencrypt
-    volumes_from:
-      - certbot
-
-  nginx-acme:
-    container_name: nginx-acme
-    image: nginx:latest
-    ports:
-      - 80:80
-    volumes:
-      - ./entrypoint/nginx-acme.conf:/etc/etc/nginx/templates/default.conf.template
-      - html:/usr/share/nginx/html
 
   certbot:
-    container_name: certbot
+    container_name: certbot-${DOMAIN}
     image: certbot/certbot:latest
     env_file: ./.ddeploy.env
-    command: certonly --webroot -w /var/www/letsencrypt --preferred-challenges http-01 --email ${MAIL} --agree-tos -d ${DOMAIN} --non-interactive --keep-until-expiring
+    entrypoint: sh -c 'while :; do certbot certonly --webroot -w /var/www/letsencrypt --preferred-challenges http-01 --email ${MAIL} --agree-tos -d ${DOMAIN} --non-interactive --keep-until-expiring; sleep 12h; done'
     volumes:
       - html:/var/www/letsencrypt
       - certs:/etc/letsencrypt
+    networks:
+      - ddeployer-net
 
   database:
-    container_name: mysql_db
+    container_name: mysql-${DOMAIN}
     image: mysql:latest
     restart: unless-stopped
     env_file: ./.ddeploy.env
-    enviorment:
-      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
     command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
     volumes:
-      - db:/var/lib/db
+      - db:/var/lib/mysql
       - ./entrypoint/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       timeout: 20s
       retries: 10
+    networks:
+      - db-network
 
   app:
-    container_name: app
+    container_name: app-${DOMAIN}
     depends_on:
       database:
         condition: service_healthy
+    ports:
+      - "${BACKEND_PORT}:3000"
     build:
       context: ./app
       dockerfile: Dockerfile
       args:
         - GIT=${GIT}
+        - BUILD=${BUILD}
+        - RUN=${RUN}
     restart: unless-stopped
-    ports:
-      - 3000:3000
     env_file:
       - ./.ddeploy.env
-      - ./env
     environment:
       - MYSQL_HOST=database
+    networks:
+      - ddeployer-net
+      - db-network
 
 volumes:
   db:
   certs:
+    external: true
   html:
+    external: true
+networks:
+  db-network:
+  ddeployer-net:
+    external: true

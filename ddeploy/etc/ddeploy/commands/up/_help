@@ -6,7 +6,6 @@ Options:
 - on: Enable auto-rebuild for the current project.
 - off: Disable auto-rebuild for the current project.
 - list: List all projects with auto-rebuild enabled.
-- -d: Build and run the project in detached mode.
 - No option: Build and run the project.
 
 Note:

@@ -1,0 +1,15 @@
+ddeploy kill - Remove Docker containers associated with a ddeploy project.
+
+Usage: ddeploy kill [project-name | all]
+
+Arguments:
+- project-name: The folder path of the specific ddeploy project to remove containers from.
+- all: Remove containers from all ddeploy projects.
+
+Note:
+- The 'ddeploy kill' command is used to remove Docker containers associated with a ddeploy project.
+- If 'project-name' is provided, the script will remove containers from the specified ddeploy project.
+- If 'all' is provided, the script will remove containers from all ddeploy projects.
+- Ensure that you have proper permissions to manage Docker containers and that you are in the ddeploy project's base directory to use this command.
+- Be cautious when using the 'all' option, as it will remove containers from all ddeploy projects, and data loss may occur if not handled properly.
+

@@ -1,0 +1,9 @@
+This command is used to manage git repository/branchs a ddeploy project.
+
+Usage: ddeploy repo [option]
+
+Options:
+- repo [github repo]: set given github repository for project.
+- branch [branch name]: set given github branch of repository for project.
+- new [github repo] [branch name]: set given github repository and branch for project.
+

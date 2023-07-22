@@ -4,11 +4,15 @@ if [ $# -lt 1 ]; then
 fi
 
 token="$1"
-commit=$(bash "$base/helpers/fetchCommit.sh" "$token")
+path="$base/configs/token"
+echo "$token" > $path
 
+source "/etc/ddeploy/helpers/repo.sh"
+
+commit=$(fetchCommit "$PWD")
 if [ -n "$commit" ]; then
-    echo "$token" > "$base/configs/token"
     echo "Token is added successfully"
 else
+    rm $path
     echo "Token is not valid"
 fi
