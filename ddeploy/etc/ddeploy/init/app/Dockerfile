@@ -1,16 +1,14 @@
 FROM node:20-alpine
-ARG GIT
-ARG BUILD
-ARG RUN
+ARG GIT BRANCH COMMIT BUILD RUN PORT
 
 WORKDIR /app
 RUN apk update && apk add git
 
-RUN git clone $GIT /app/repo/
+RUN git clone -b $BRANCH $GIT /app/$COMMIT/
 
-WORKDIR /app/repo
+WORKDIR /app/$COMMIT
 RUN $BUILD
 COPY . .
 
-EXPOSE 3000
+EXPOSE $PORT
 CMD $RUN

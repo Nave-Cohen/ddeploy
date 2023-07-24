@@ -1,7 +1,8 @@
 source $base/helpers/json.sh
+source $base/helpers/repo.sh
 
 check_required() {
-    required_variables=("BUILD" "RUN" "DOMAIN" "MAIL" "APP_PORT" "MYSQL_PASSWORD" "MYSQL_DATABASE" "MYSQL_USER")
+    required_variables=("BUILD" "RUN" "DOMAINS" "MAIL" "PORT" "MYSQL_PASSWORD" "MYSQL_DATABASE" "MYSQL_USER")
     for variable in "${required_variables[@]}"; do
         if [[ -z "${!variable}" ]]; then
             echo "Error: $variable must be defined in .ddeploy.env file"
@@ -18,8 +19,10 @@ load_vars() {
     if ! check_required; then
         exit 1
     fi
+    export DOMAIN="$(echo $DOMAINS | cut -d' ' -f1)"
+    export CB_DOMAINS="$(echo $DOMAINS | awk '$1=$1' FS=' ' OFS=' -d ')"
     export GIT="$(getItem "$WORKDIR" git)"
+    export COMMIT=$(fetchCommit "$WORKDIR")
     export BRANCH="$(getItem "$WORKDIR" branch)"
-    export BACKEND_PORT="$(getItem "$WORKDIR" port)"
     export NAME="$(basename "$WORKDIR")"
 }

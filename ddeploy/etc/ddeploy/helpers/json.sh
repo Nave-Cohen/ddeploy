@@ -17,9 +17,8 @@ addProject() {
     local commit="$2"
     local git="$3"
     local branch="$4"
-    local port=$(getFreePort)
-    jq --arg folder "$folder" --arg commit "$commit" --arg git "$git" --arg branch "$branch" --arg port "$port" \
-        '. += [{"folder": $folder, "commit": $commit, "git": $git, "branch": $branch, "port": $port}]' $json_file >tmp.json && mv tmp.json $json_file
+    jq --arg folder "$folder" --arg commit "$commit" --arg git "$git" --arg branch "$branch" \
+        '. += [{"folder": $folder, "commit": $commit, "git": $git, "branch": $branch]' $json_file >tmp.json && mv tmp.json $json_file
 }
 rmProject() {
     local workdir="$1"
@@ -51,22 +50,4 @@ getItem() {
     local key="$2"
     local item=$(jq -r --arg wd "$workdir" --arg k "$key" '.[] | select(.folder == $wd) | .[$k]' $json_file)
     echo "$item"
-}
-
-getFreePort() {
-    ports=($(getAll "port"))
-    max_port=$(get_max "${ports[@]}")
-    free_port=$((max_port + 1))
-    echo "$free_port"
-}
-
-get_max() {
-    local array=("$@")
-    local max=2999
-    for num in "${array[@]}"; do
-        if ((num > max)); then
-            max=$num
-        fi
-    done
-    echo "$max"
 }
