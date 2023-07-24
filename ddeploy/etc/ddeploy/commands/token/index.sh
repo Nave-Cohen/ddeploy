@@ -1,13 +1,13 @@
+#!/bin/bash
+base=/etc/ddeploy
+
 if [ $# -lt 1 ]; then
     echo "doc token [token]"
     exit 5
 fi
-
-token="$1"
-path="$base/configs/token"
-echo "$token" > $path
-
+source /etc/ddeploy/helpers/token.sh
 source "/etc/ddeploy/helpers/repo.sh"
+set_token "$1"
 
 commit=$(fetchCommit "$PWD")
 if [ -n "$commit" ]; then
