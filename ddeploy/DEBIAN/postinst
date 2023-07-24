@@ -2,6 +2,27 @@
 
 set -e
 base="/etc/ddeploy"
+# Function to generate a unique password for the host machine
+generate_unique_password() {
+    # Function to generate a random string
+    generate_random_string() {
+        cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w "${1:-32}" | head -n 1
+    }
+
+    # Get the hostname of the machine
+    hostname=$(hostname)
+
+    # Get the current timestamp (number of seconds since the epoch)
+    timestamp=$(date +%s)
+
+    # Generate a random string
+    random_string=$(generate_random_string 12)
+
+    # Combine the components to create the unique password
+    hash="${hostname}-${timestamp}-${random_string}"
+
+    echo "$hash" >/etc/ddeploy/.hash
+}
 
 restore_conf() {
     log_folder="/var/tmp/ddeploy/log"
@@ -48,4 +69,7 @@ if [ "$1" = "configure" ]; then
     restore_conf
     echo "Update existing ddeploy enviorment with new configuration"
     update_conf
+    if [ ! -f /etc/ddeploy/.hash ]; then
+        generate_unique_password
+    fi
 fi
