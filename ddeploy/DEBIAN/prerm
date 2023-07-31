@@ -8,16 +8,13 @@ remove_cron() {
 }
 
 backup_old_conf() {
-    log_folder="/var/tmp/ddeploy/log"
     conf_folder="/var/tmp/ddeploy/conf"
-    if [[ ! -d "$log_folder" ]]; then
-        mkdir -p $log_folder
-    fi
     if [[ ! -d "$conf_folder" ]]; then
         mkdir $conf_folder
     fi
-    mv -f /etc/ddeploy/configs/* $conf_folder
-    mv -f /var/log/ddeploy/* $log_folder
+    if [ ! -z "$(find "/etc/ddeploy/configs" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
+        mv -f /etc/ddeploy/configs/* $conf_folder
+    fi
 }
 
 if [[ "$1" == "update" ]]; then

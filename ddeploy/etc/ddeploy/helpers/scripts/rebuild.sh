@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
-exec &>>"/var/log/ddeploy/cron.log"
+exec &>>"$cron_log"
+
 folder="$1"
 name=$(basename "$folder")
 
-source $base/helpers/repo.sh
 isUpdated "$folder"
 
 if [[ $? -eq 1 ]]; then
     echo "$name - Nothing to build - $(date +'%d/%m/%Y %H:%M:%S')"
 elif [[ $? -eq 2 ]]; then
     echo -e "Error: GitHub api error, try to check token\nRemove $name from autobuild"
-    sed -i "$folder/d" "$list_file"
+    sed -i "$folder/d" "$rebuild_list"
 else
-    cd $folder && /usr/local/bin/ddeploy "up" "-d" &>>"$build_log"
+    cd "$folder" && source $scripts/enviorment.sh "$folder" && $command_line "up" "-d" &>>"$build_log"
     echo "$name - rebuilt successfully - $(date +'%d/%m/%Y %H:%M:%S')"
 fi

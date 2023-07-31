@@ -44,6 +44,12 @@ printn() {
 }
 
 print_loading() {
+  local changed=0
+  if [[ -o errexit ]]; then
+    set +e
+    changed=1
+  fi
+
   pid=$1
   msg=$2
   frames=("⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏")
@@ -65,8 +71,10 @@ print_loading() {
   else
     print "\r ✘ %s" "err" "$msg"
   fi
+  if [ $changed -eq 1 ]; then
+    set -e
+  fi
   echo
-  return "$exitCode"
 }
 
 print_nchar() {

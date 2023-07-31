@@ -1,12 +1,10 @@
-source $base/helpers/json.sh
-source $base/helpers/enviorment.sh
-source $base/helpers/printer.sh
 #!/usr/bin/env bash
+import "printer"
 
 # Load helper scripts
 down() {
     local folder=$1
-    load_vars $folder
+    source $scripts/enviorment.sh "$folder"
     local conf="$NAME.conf"
     local template_conf="$conf.template"
     rm -f "$base/compose/entrypoints/$template_conf" &>/dev/null &
@@ -15,7 +13,7 @@ down() {
     print_loading $! "Remove $conf from nginx container"
     docker exec nginx nginx -s reload &>/dev/null &
     print_loading $! "Reload nginx"
-    docker compose -f "$folder/docker-compose.yml" down
+    timeout 99999 docker compose -f "$folder/docker-compose.yml" down
 }
 
 if [ $# -gt 0 ]; then

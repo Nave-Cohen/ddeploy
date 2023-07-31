@@ -3,13 +3,14 @@ Usage: ddeploy [COMMAND] [OPTIONS]:
  Global Commands:
   - init [github-url] [branch] - initialize new ddeploy project
   - down [project-name | all] - Stop and remove Docker containers associated with a ddeploy project.
-  - ls - retrieves the status of all the web applications and displays the information in a formatted table.
+  - ls - retrieves the status of all the web applications and displays the information in formatted table.
 
  Enviormental Commands:
   - repo [branch | repo | new] -  manage git repository/branchs.
   - up [ | -d | on | off | list] - rebuild and compose up, or add/remove from auto rebuild
   - down - Stop and remove Docker containers associated with a ddeploy project.
-  - token [github-Token] - set a GitHub token for auto-rebuild on new commit
-  - status - show the status of HTTP, container, and images
+  - token - set a GitHub token for auto-rebuild on new commit.
+  - status - show the status of HTTP, container, and images.
+  - domains - show the HTTP status of all project domains.
 
 Run 'ddeploy [COMMAND] help' for more information on a command.

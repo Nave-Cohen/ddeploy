@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
+source /etc/ddeploy/helpers/scripts/loader.sh
+import "json"
 
-exec &>>"/var/log/ddeploy/cleaner.log"
-base="/etc/ddeploy"
-source $base/helpers/json.sh
+exec &>>"$cleaner_log"
 
 folders=$(getAll "folder")
 read -a folders < <(getAll "folder")

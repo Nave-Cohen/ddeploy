@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+source /etc/ddeploy/helpers/scripts/loader.sh
+import "json"
+import "repo"
 
 lock="/tmp/rebuilder.lock"
 
@@ -11,12 +14,12 @@ acquire_lock() {
 process_folder() {
     local folder="$1"
     if isWorkdir "$folder"; then
-        ("$base/helpers/rebuild.sh" "$folder") &
+        ($scripts/rebuild.sh "$folder") &
         # Store the PID of the background process
         pids+=($!)
     else
         echo "$(basename "$folder") is not a ddeploy environment. Removing it from auto build."
-        sed -i "$folder/d" "$list_file"
+        sed -i "$folder/d" "$rebuild_list"
     fi
 }
 
@@ -32,7 +35,7 @@ perform_rebuild() {
     for ((i = 1; i <= 11; i++)); do
         while IFS= read -r folder; do
             process_folder "$folder"
-        done <"$list_file"
+        done <"$rebuild_list"
 
         wait_for_children
 
@@ -49,13 +52,7 @@ perform_rebuild() {
 
 {
     acquire_lock
-
-    export base="/etc/ddeploy"
-    export list_file="$base/configs/rebuild.lst"
-    export build_log="/var/log/ddeploy/build.log"
-
-    source "$base/helpers/json.sh"
-    exec &>>"/var/log/ddeploy/cron.log"
+    exec &>>"$cron_log"
 
     # Array to store child process IDs
     pids=()

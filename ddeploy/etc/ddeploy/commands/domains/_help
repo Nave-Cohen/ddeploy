@@ -1,0 +1,8 @@
+This command retrieves and displays the status information of all the project domains.
+
+Usage: ddeploy domains
+
+The script displays the following information:
+
+ - Domain: domain url.
+ - Status: http status of the domain.

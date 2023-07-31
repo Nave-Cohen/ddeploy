@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
-source /etc/ddeploy/helpers/printer.sh
-source /etc/ddeploy/helpers/status.sh
-
-print_title "$NAME"
+import "status"
+import "string"
 
 # Print project status
 projectStatus "$WORKDIR"
 
-# Print the status of project services
-servicesStatus "$WORKDIR"
+echo
+base='{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'
+content=$(docker container ls --all --filter label=com.docker.compose.project="$NAME" --format "table $base")
+# Create an associative array to hold the replacements
 
-webStatus "$WORKDIR"
+content=$(replace_all_pad "$content" "NAMES|Container IMAGE|Image STATUS|Status PORTS|Port")
+echo -e "$content"

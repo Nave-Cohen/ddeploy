@@ -25,13 +25,8 @@ generate_unique_password() {
 }
 
 restore_conf() {
-    log_folder="/var/tmp/ddeploy/log"
     conf_folder="/var/tmp/ddeploy/conf"
-    if [[ -d "$log_folder" ]]; then
-        mv $log_folder/* /var/log/ddeploy
-        rm -r $log_folder
-    fi
-    if [[ -d "$conf_folder" ]]; then
+    if [ ! -z "$(find "$conf_folder" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
         mv $conf_folder/* $base/configs
         rm -r $conf_folder
     fi
@@ -69,7 +64,11 @@ if [ "$1" = "configure" ]; then
     restore_conf
     echo "Update existing ddeploy enviorment with new configuration"
     update_conf
+    if [ ! -d /var/log/ddeploy ]; then
+        mkdir /var/log/ddeploy
+    fi
     if [ ! -f /etc/ddeploy/.hash ]; then
         generate_unique_password
     fi
+
 fi
