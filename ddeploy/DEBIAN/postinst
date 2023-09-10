@@ -57,6 +57,20 @@ create_cronjobs() {
     ) | crontab -
 }
 
+
+
+update_service() {
+    # Compare the checksums
+    backup_path=/var/lib/ddeploy
+    service_path=/etc/systemd/system/ddeploy.service
+    if ! cmp -s $backup_path/ddeploy.service $service_path; then
+        echo -e "Updating systemd\nReload daemon"
+        systemctl daemon-reload
+        echo "Start ddeploy.service"
+        systemctl restart ddeploy
+    fi
+}
+
 if [ "$1" = "configure" ]; then
     echo "Configure new cronjobs ..."
     create_cronjobs
@@ -70,5 +84,5 @@ if [ "$1" = "configure" ]; then
     if [ ! -f /etc/ddeploy/.hash ]; then
         generate_unique_password
     fi
-
+    update_service
 fi

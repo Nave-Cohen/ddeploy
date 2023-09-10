@@ -11,7 +11,7 @@ end_with() {
 start_with() {
     local str="$1"
     local sub="$2"
-    if [[ "$content" == "$str"* ]]; then
+    if [[ "$str" = "$sub"* ]]; then
         return 0
     fi
     return 1

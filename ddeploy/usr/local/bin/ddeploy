@@ -3,8 +3,12 @@ source /etc/ddeploy/helpers/scripts/loader.sh
 
 import "json"
 
+if ! systemctl is-active --quiet ddeploy.service; then
+    echo -e "[ERROR] ddeploy.service is not active\ntry systemctl status ddeploy for more help."
+    exit 1
+fi
 if [ "$#" -lt 1 ]; then
-    echo "[ERROR] No command set"
+    echo "[ERROR] No command set."
     exit 5
 fi
 

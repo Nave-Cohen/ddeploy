@@ -1,0 +1,14 @@
+[Unit]
+Description=Docker Compose Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+RestartSec=5
+Type=simple
+ExecStart=/usr/libexec/docker/cli-plugins/docker-compose -f /etc/ddeploy/compose/docker-compose.yml up
+WorkingDirectory=/etc/ddeploy/compose
+
+[Install]
+WantedBy=multi-user.target

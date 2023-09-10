@@ -1,5 +1,6 @@
 #!/bin/bash
 import "repo"
+import "string"
 set -euo pipefail
 
 if ! isWorkdir "$1"; then
@@ -14,7 +15,7 @@ set +a
 
 required_variables=("IMAGE" "BUILD" "RUN" "DOMAINS" "MAIL" "PORT" "MYSQL_PASSWORD" "MYSQL_DATABASE" "MYSQL_USER")
 for variable in "${required_variables[@]}"; do
-    if [[ -z "${!variable}" ]]; then
+    if [[ -z "${!variable}" ]] || start_with "${!variable}" "#" ; then
         echo "Error: $variable must be defined in .ddeploy.env file"
         exit 1
     fi

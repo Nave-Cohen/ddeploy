@@ -1,7 +1,6 @@
 services:
   nginx_https:
     image: nginx:latest
-    restart: unless-stopped
     container_name: nginx
     ports:
       - 443:443
