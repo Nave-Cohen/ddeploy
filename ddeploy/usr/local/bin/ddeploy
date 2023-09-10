@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
+source /etc/ddeploy/helpers/scripts/loader.sh
 
-export base="/etc/ddeploy"
-export WORKDIR="$PWD"
-source $base/helpers/json.sh
-source $base/helpers/enviorment.sh
+import "json"
 
+if ! systemctl is-active --quiet ddeploy.service; then
+    echo -e "[ERROR] ddeploy.service is not active\ntry systemctl status ddeploy for more help."
+    exit 1
+fi
 if [ "$#" -lt 1 ]; then
-    echo "[ERROR] No command set"
+    echo "[ERROR] No command set."
     exit 5
 fi
 
@@ -17,21 +19,14 @@ if [ -f "$global_command" ]; then
     exit 0
 fi
 
-if ! isWorkdir $WORKDIR; then
-    echo "$(basename "$WORKDIR") is not a runner environment"
-    exit 1
-fi
-
-if ! load_vars $WORKDIR; then
-    exit 1
-fi
+source $scripts/enviorment.sh "$PWD"
 
 sub_command="$base/commands/$1/index.sh"
 if [ -f "$sub_command" ]; then
     shift
     "$sub_command" "$@"
     exit 0
-elif command docker compose "$@" --help >/dev/null; then # Check if the provided command is a valid Docker Compose command
+elif command docker compose "$@" --help &>/dev/null; then # Check if the provided command is a valid Docker Compose command
     # Run the Docker Compose command
     docker compose "$@"
     exit 0

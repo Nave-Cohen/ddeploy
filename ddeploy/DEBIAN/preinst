@@ -1,22 +1,33 @@
 #!/usr/bin/env bash
 set -e
 
-remove_old_cron(){
+remove_old_cron() {
     crontab -l | grep -vF '/etc/ddeploy/maintence/rebuilder.sh' | crontab -
     crontab -l | grep -vF '/etc/ddeploy/maintence/cleaner.sh' | crontab -
 }
 
-backup_old_conf(){
-    log_folder="/var/tmp/ddeploy/log"
+backup_old_conf() {
+    conf_path="/etc/ddeploy/configs"
     conf_folder="/var/tmp/ddeploy/conf"
-    if [[ ! -d "$log_folder" ]]; then
-        mkdir -p $log_folder
-    fi
+    rm -f $conf_path/variables.env
     if [[ ! -d "$conf_folder" ]]; then
         mkdir $conf_folder
     fi
-    mv -f /etc/ddeploy/configs/* $conf_folder
-    mv -f /var/log/ddeploy/* $log_folder
+    if [ ! -z "$(find "$conf_path" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
+        mv -f $conf_path/* $conf_folder
+    fi
+}
+
+check_systemd(){
+    backup_path=/var/lib/ddeploy
+    service_path=/etc/systemd/system/ddeploy.service
+    mkdir -p $backup_path
+    cp  $service_path $backup_path/ddeploy.service
+
+    # Compare the checksums
+    if ! cmp -s $backup_path/ddeploy.service $service_path; then
+        touch /var/tmp/has_diff
+    fi
 }
 
 if [[ "$1" == "upgrade" ]]; then
@@ -24,4 +35,6 @@ if [[ "$1" == "upgrade" ]]; then
     remove_old_cron
     echo "Backup configuration files ..."
     backup_old_conf
+    echo "Check systemd configuration"
+    check_systemd
 fi

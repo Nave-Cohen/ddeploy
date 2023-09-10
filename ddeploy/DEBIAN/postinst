@@ -2,21 +2,37 @@
 
 set -e
 base="/etc/ddeploy"
+# Function to generate a unique password for the host machine
+generate_unique_password() {
+    # Function to generate a random string
+    generate_random_string() {
+        cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w "${1:-32}" | head -n 1
+    }
 
-restore_conf(){
-    log_folder="/var/tmp/ddeploy/log"
+    # Get the hostname of the machine
+    hostname=$(hostname)
+
+    # Get the current timestamp (number of seconds since the epoch)
+    timestamp=$(date +%s)
+
+    # Generate a random string
+    random_string=$(generate_random_string 12)
+
+    # Combine the components to create the unique password
+    hash="${hostname}-${timestamp}-${random_string}"
+
+    echo "$hash" >/etc/ddeploy/.hash
+}
+
+restore_conf() {
     conf_folder="/var/tmp/ddeploy/conf"
-    if [[ -d "$log_folder" ]]; then
-        mv $log_folder/* /var/log/ddeploy
-        rm -r $log_folder
-    fi
-    if [[ -d "$conf_folder" ]]; then
+    if [ ! -z "$(find "$conf_folder" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
         mv $conf_folder/* $base/configs
         rm -r $conf_folder
     fi
 }
 
-update_conf(){
+update_conf() {
     json_data="$base/configs/deploys.json"
     while IFS= read -r line; do
         folder=$(echo "$line" | jq -r '.folder')
@@ -28,13 +44,31 @@ update_conf(){
     done < <(jq -c '.[]' "$json_data")
 }
 
-create_cronjobs(){
+create_cronjobs() {
     # Define the cron job commands
     cronjob="* * * * * $base/maintence/rebuilder.sh"
     cronjob2="0 0 * * * $base/maintence/cleaner.sh"
 
     # Add the cron job commands to the crontab
-    (crontab -l ; echo "$cronjob" ; echo "$cronjob2") | crontab -
+    (
+        crontab -l
+        echo "$cronjob"
+        echo "$cronjob2"
+    ) | crontab -
+}
+
+
+
+update_service() {
+    # Compare the checksums
+    backup_path=/var/lib/ddeploy
+    service_path=/etc/systemd/system/ddeploy.service
+    if ! cmp -s $backup_path/ddeploy.service $service_path; then
+        echo -e "Updating systemd\nReload daemon"
+        systemctl daemon-reload
+        echo "Start ddeploy.service"
+        systemctl restart ddeploy
+    fi
 }
 
 if [ "$1" = "configure" ]; then
@@ -44,4 +78,11 @@ if [ "$1" = "configure" ]; then
     restore_conf
     echo "Update existing ddeploy enviorment with new configuration"
     update_conf
+    if [ ! -d /var/log/ddeploy ]; then
+        mkdir /var/log/ddeploy
+    fi
+    if [ ! -f /etc/ddeploy/.hash ]; then
+        generate_unique_password
+    fi
+    update_service
 fi

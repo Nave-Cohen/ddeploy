@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-NAME=$(basename "$WORKDIR")
+import "repo"
+
 if [[ $1 == "on" ]]; then
     if [[ ! -f "$base/configs/token" ]]; then
         echo -e "[ERROR] - Token must added first\ndoc token [Token]"
@@ -32,7 +33,10 @@ if [[ $1 == "list" ]]; then
 fi
 
 if [[ $# -lt 1 ]]; then
-    $base/helpers/deploy.sh
+    export COMMIT=$(fetchCommit "$WORKDIR")
+    $scripts/deploy.sh
 else
-    cat ./_help
+    script_path=$(readlink -f "$0")
+    script_directory=$(dirname "$script_path")
+    cat $script_directory/_help
 fi

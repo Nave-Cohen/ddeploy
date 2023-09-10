@@ -1,0 +1,40 @@
+/var/log/ddeploy/build.log {
+        weekly
+        missingok
+        rotate 7
+        dateformat -%Y-%m-%d
+        compress
+        delaycompress
+        notifempty
+        sharedscripts
+}
+/var/log/ddeploy/deploy.log {
+        weekly
+        missingok
+        rotate 7
+        dateformat -%Y-%m-%d
+        compress
+        delaycompress
+        notifempty
+        sharedscripts
+}
+/var/log/ddeploy/cleaner.log {
+        weekly
+        missingok
+        rotate 7
+        dateformat -%Y-%m-%d
+        compress
+        delaycompress
+        notifempty
+        sharedscripts
+}
+/var/log/ddeploy/cron.log {
+        daily
+        missingok
+        rotate 7
+        dateformat -%Y-%m-%d
+        compress
+        delaycompress
+        notifempty
+        sharedscripts
+}

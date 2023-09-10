@@ -1,18 +1,46 @@
-if [ $# -lt 1 ]; then
-    echo "doc token [token]"
-    exit 5
-fi
+#!/bin/bash
 
-token="$1"
-path="$base/configs/token"
-echo "$token" > $path
+import "token"
+import "repo"
+import "string"
 
-source "/etc/ddeploy/helpers/repo.sh"
+read_secret() {
+    local password=""
+    local char
 
-commit=$(fetchCommit "$PWD")
+    echo -n "Enter token: "
+
+    while IFS= read -s -n 1 char; do
+        # Break the loop when Enter is pressed
+        if [[ $char == $'\0' ]]; then
+            break
+        fi
+
+        # Handle backspace (remove last character from the password)
+        if [[ $char == $'\177' ]]; then
+            if [ -n "$password" ]; then
+                password=${password%?}
+                echo -en "\b \b" # Erase the last asterisk
+            fi
+        else
+            password+=$char
+            echo -n "*"
+        fi
+    done
+
+    echo # Move to a new line after the user input
+    export "$1"="$password"
+}
+
+read_secret token
+
+set_token "$token"
+
+commit=$(fetchCommit)
+
 if [ -n "$commit" ]; then
     echo "Token is added successfully"
 else
-    rm $path
+    rm $token_path
     echo "Token is not valid"
 fi

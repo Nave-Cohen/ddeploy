@@ -1,41 +1,43 @@
 #!/usr/bin/env bash
+import "printer"
 
 # Load helper scripts
-source "$base/helpers/json.sh"
-source "$base/helpers/enviorment.sh"
-
-# The 'down' function stops and removes Docker containers associated with a ddeploy project.
 down() {
     local folder=$1
-    load_vars "$folder"
-    docker compose -f "$folder/docker-compose.yml" down
+    source $scripts/enviorment.sh "$folder"
+    local conf="$NAME.conf"
+    local template_conf="$conf.template"
+    rm -f "$base/compose/entrypoints/$template_conf" &>/dev/null &
+    print_loading $! "Remove $template_conf from entrypoints"
+    docker exec nginx rm -f /etc/nginx/conf.d/$conf &>/dev/null &
+    print_loading $! "Remove $conf from nginx container"
+    docker exec nginx nginx -s reload &>/dev/null &
+    print_loading $! "Reload nginx"
+    timeout 99999 docker compose -f "$folder/docker-compose.yml" down
 }
 
-# Check if any arguments are provided.
 if [ $# -gt 0 ]; then
     if [[ "$1" = "all" ]]; then
-        # Stop and remove containers from all ddeploy projects.
-        echo "Stop and remove containers from all ddeploy projects..."
+        echo "Stop and kill containers from all ddeploy projects..."
         folders=$(getAll "folder")
         read -a folders < <(getAll "folder")
         for folder in "${folders[@]}"; do
-            echo "  - $(basename "$folder")..."
+            echo "  - $(basename "$folder")"
             down "$folder"
         done
     elif isWorkdir $1; then
-        # Stop and remove containers from the specified ddeploy project.
-        echo "Stop and remove containers from $(basename "$WORKDIR")..."
-        down "$WORKDIR"
+        echo "Stop and kill containers from $(basename "$WORKDIR")..."
+        down $WORKDIR
     else
-        echo "$1 is not a ddeploy environment."
+        echo "$1 is not ddeploy enviorment."
         exit 1
     fi
 else
-    # If no argument provided, stop and remove containers from the current ddeploy project.
-    isWorkdir "$WORKDIR" || {
-        echo "$WORKDIR is not a ddeploy environment."
+    if ! isWorkdir "$PWD"; then
+        echo "$WORKDIR is not ddeploy enviorment."
         exit 1
-    }
-    echo "Stop and remove containers from $(basename "$WORKDIR")..."
-    down "$WORKDIR"
+    else
+        echo "Stop and kill containers from $(basename "$WORKDIR")..."
+        down "$WORKDIR"
+    fi
 fi

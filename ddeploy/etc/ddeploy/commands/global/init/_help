@@ -8,5 +8,5 @@ Arguments:
 
 Note:
 - Before running this script, make sure you have set the necessary values in the .ddeploy.env file (generated automatically).
-- The .ddeploy.env file contains configuration options such as GIT, BRANCH, DOMAIN, MAIL, BACKEND_IP, BACKEND_PORT, MYSQL_USER, MYSQL_PASSWORD, and MYSQL_DATABASE. Make sure to edit this file according to your project requirements.
+- The .ddeploy.env file contains configuration options such as BUILD, RUN, DOMAINS, MAIL, PORT, MYSQL_USER, MYSQL_PASSWORD, and MYSQL_DATABASE. Make sure to edit this file according to your project requirements.
 

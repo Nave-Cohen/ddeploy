@@ -1,13 +1,13 @@
 services:
   nginx_https:
     image: nginx:latest
-    restart: unless-stopped
     container_name: nginx
     ports:
       - 443:443
       - 80:80
     volumes:
-      - ./entrypoints/nginx_templates/:/etc/nginx/templates
+      - ./templates/default.conf:/etc/nginx/conf.d/default.conf
+      - ./entrypoints/:/etc/nginx/templates
       - certs:/etc/letsencrypt
       - html:/usr/share/nginx/html
     networks:
