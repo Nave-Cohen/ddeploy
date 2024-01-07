@@ -1,3 +1,5 @@
+
+
 ## Clone project & Install Dependencies
 
 ```sh
@@ -48,3 +50,19 @@ ddeploy help
 # Get help for a specific command
 ddeploy help [command]
 ```
+
+##### roadmap
+```sh
+# MongoDB Integration (Next Update)
+# - MongoDB support will be added in the next update.
+# - Stay tuned for more information and instructions on incorporating MongoDB into your projects.
+```
+
+<p align="center">
+  <a href="https://www.docker.com/">
+    <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white" alt="Docker">
+  </a>
+  <a href="https://www.gnu.org/software/bash/">
+    <img src="https://img.shields.io/badge/bash-black?style=for-the-badge&logo=gnubash&logoColor=white" alt="GNU Bash">
+  </a>
+</p>
