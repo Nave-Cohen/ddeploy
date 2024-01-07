@@ -17,6 +17,7 @@ cd ddeploy
 #### install package
 ```sh
 dpkeg -i ddeploy.deb
+apt install -f
 systemctl start ddeploy
 ```
 
@@ -28,10 +29,16 @@ systemctl start ddeploy
   ddeploy init [github-repositry] [branch name]
 ```
 
-### :warning: Edit /path/to/project/ddeploy.env that created :warning:
+### :warning: Edit /path/to/project/ddeploy.env example that allready created :warning:
 
 #### deploy 
 ```sh
 ddeploy up
+```
+
+##### for more information & command
+```sh
+ddeploy help
+ddeploy help [command]
 ```
 
