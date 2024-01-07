@@ -1,17 +1,21 @@
 ### clone & Install dependencies
 
+#### clone ddeploy project
+
+```sh
+git clone https://github.com/Nave-Cohen/ddeploy.git
+cd ddeploy
+```
+
 #### install docker
-1. copy the script from https://get.docker.com/
-1. paste inside docker-install.sh
 
 ```sh
   chmod +X docker-install.sh
   ./docker-install.sh
 ```
-#### clone and install package
+
+#### install package
 ```sh
-git clone https://github.com/Nave-Cohen/ddeploy.git
-cd ddeploy
 dpkeg -i ddeploy.deb
 systemctl start ddeploy
 ```
