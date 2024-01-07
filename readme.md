@@ -19,7 +19,7 @@ apt install -f
 systemctl start ddeploy
 ```
 
-## 1. create new project
+## create new project
 
 ```sh
   # Replace [github-repository] with the GitHub repository URL of your project.
@@ -29,11 +29,11 @@ systemctl start ddeploy
   ddeploy init [github-repository] [branch name]
 ```
 
-## 2. setup & project configuration
+## setup & project configuration
 
 Edit the `ddeploy.env` file already created inside the project folder to match your project configuration.
 
-## 3. deploy
+## deploy
 
 ```sh
 # Deploy the project using ddeploy
@@ -51,12 +51,11 @@ ddeploy help
 ddeploy help [command]
 ```
 
-##### roadmap
-```sh
-# MongoDB Integration (Next Update)
-# - MongoDB support will be added in the next update.
-# - Stay tuned for more information and instructions on incorporating MongoDB into your projects.
-```
+### roadmap
+
+- MongoDB Integration (Next Update)
+- MongoDB support will be added in the next update.
+- Stay tuned for more information and instructions on incorporating MongoDB into your projects.
 
 <p align="center">
   <a href="https://www.docker.com/">
