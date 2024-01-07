@@ -18,16 +18,11 @@ backup_old_conf() {
     fi
 }
 
-check_systemd(){
+copy_service(){
     backup_path=/var/lib/ddeploy
     service_path=/etc/systemd/system/ddeploy.service
     mkdir -p $backup_path
     cp  $service_path $backup_path/ddeploy.service
-
-    # Compare the checksums
-    if ! cmp -s $backup_path/ddeploy.service $service_path; then
-        touch /var/tmp/has_diff
-    fi
 }
 
 if [[ "$1" == "upgrade" ]]; then
@@ -36,5 +31,5 @@ if [[ "$1" == "upgrade" ]]; then
     echo "Backup configuration files ..."
     backup_old_conf
     echo "Check systemd configuration"
-    check_systemd
+    copy_service
 fi

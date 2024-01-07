@@ -18,6 +18,7 @@ systemctl start ddeploy
 ```
 
 ## 1. create new project
+
 ```sh
   # Replace [github-repository] with the GitHub repository URL of your project.
   # Replace [branch name] with the name of the branch you want to use.
@@ -27,9 +28,11 @@ systemctl start ddeploy
 ```
 
 ## 2. setup & project configuration
-  Edit the `ddeploy.env` file already created inside the project folder to match your project configuration.
 
-## 3. deploy 
+Edit the `ddeploy.env` file already created inside the project folder to match your project configuration.
+
+## 3. deploy
+
 ```sh
 # Deploy the project using ddeploy
 ddeploy up
@@ -37,6 +40,7 @@ ddeploy status # Get deployment status
 ```
 
 ##### for more information & command
+
 ```sh
 # Get general help for ddeploy
 ddeploy help
@@ -44,4 +48,3 @@ ddeploy help
 # Get help for a specific command
 ddeploy help [command]
 ```
-
