@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+function clean_deployed {
+    local deploys_json="/etc/ddeploy/configs/deploys.json"
+    local workdir="$SHUNIT_TMPDIR"
+    new_json=$(jq --arg wd "$workdir" '[.[] | select(.folder != $wd)]' $deploys_json)
+    echo "$new_json" > "$deploys_json"
+}
+
 function fileExist {
     filename=$1
     echo "[ -f '${SHUNIT_TMPDIR}/${filename}' ]"
@@ -58,6 +65,10 @@ function test_init_files_created {
 
 function setUp {
     cd $SHUNIT_TMPDIR
+}
+
+function oneTimeTearDown {
+    clean_deployed
 }
 
 . ./tests/shunit2
