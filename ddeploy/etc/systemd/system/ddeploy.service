@@ -7,7 +7,8 @@ Requires=docker.service
 Restart=always
 RestartSec=5
 Type=simple
-ExecStart=/usr/libexec/docker/cli-plugins/docker-compose -f /etc/ddeploy/compose/docker-compose.yml up
+ExecStart=/etc/ddeploy/compose/compose.sh start
+ExecStop=/etc/ddeploy/compose/compose.sh stop
 WorkingDirectory=/etc/ddeploy/compose
 
 [Install]

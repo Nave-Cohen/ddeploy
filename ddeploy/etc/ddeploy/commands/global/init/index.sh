@@ -36,6 +36,10 @@ fi
 # Copy necessary files from $base/init/
 cp -r $base/init/docker-compose.yml .
 echo + docker-compose.yml
+cp -r $base/init/mongo-compose.yml .
+echo + mongo-compose.yml
+cp -r $base/init/mysql-compose.yml .
+echo + mysql-compose.yml
 cp -r $base/init/app .
 echo + app/Dockerfile
 cp -r $base/init/entrypoint .
