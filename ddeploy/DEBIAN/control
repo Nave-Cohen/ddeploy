@@ -3,4 +3,4 @@ Version: 1.0
 Architecture: all
 Maintainer: Internal Pointers <nave.cohen@e.braude.ac.il>
 Description: ddeploy description
-Depends: jq , docker, git
+Depends: jq , docker, git, cron
