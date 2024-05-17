@@ -1,0 +1,75 @@
+name: Build, Test, and Publish Deb Package
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Update package lists and Install dependencies
+        run: |
+         sudo apt-get update
+         sudo apt-get install -y build-essential dh-make
+
+      - name: Build Package
+        run: sudo dpkg-deb --build ./ddeploy
+
+      - name: Create Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ddeploy
+          path: ddeploy.deb
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v4
+        with:
+            name: ddeploy
+
+      - name: Update package lists
+        run: sudo apt-get update && sudo apt-get install -y systemd build-essential dh-make
+
+      - name: Install Docker and dependencies
+        run: |
+            sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+            sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+            sudo apt-get update
+            sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker jq git cron
+
+      - name: Install package
+        run: |
+            sudo dpkg -i ./ddeploy.deb
+
+      - name: run tests
+        run: |
+            sudo bash ./tests/run.sh
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+        - name: Checkout code and Download Artifact
+          uses: actions/checkout@v3
+        
+        - uses: actions/download-artifact@v4
+          with:
+            name: ddeploy
+        
+        - name: Commit and Push
+          run: |
+                git config user.email "github-actions@github.com"
+                git config user.name "github-actions"
+                git add ddeploy.deb
+                git commit -m "Add ddeploy.deb"
+                git push
+          env:
+            GH_PAT: ${{ secrets.GIT_TOKEN }}

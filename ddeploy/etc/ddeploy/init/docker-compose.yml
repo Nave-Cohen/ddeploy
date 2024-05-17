@@ -11,32 +11,10 @@ services:
     networks:
       - ddeployer-net
 
-  database:
-    container_name: mysql-${NAME}
-    image: mysql:latest
-    restart: unless-stopped
-    env_file: ./.ddeploy.env
-    command: --default-authentication-plugin=mysql_native_password
-    environment:
-      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
-      - MYSQL_ALLOW_EMPTY_PASSWORD="no"
-
-    volumes:
-      - db:/var/lib/mysql
-      - ./entrypoint/init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
-      timeout: 20s
-      retries: 10
-    networks:
-      - db-network
 
   app:
     image: ${NAME}:${SHORT_COMMIT}
     container_name: app-${NAME}
-    depends_on:
-      database:
-        condition: service_healthy
     build:
       context: ./app
       dockerfile: Dockerfile
@@ -58,7 +36,6 @@ services:
       - db-network
 
 volumes:
-  db:
   certs:
     external: true
   html:

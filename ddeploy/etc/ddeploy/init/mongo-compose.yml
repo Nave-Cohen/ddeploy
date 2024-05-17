@@ -1,0 +1,17 @@
+services:
+  database:
+    image: mongo:latest
+    restart: unless-stopped
+    env_file: ./.ddeploy.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_INITDB_ROOT_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
+    volumes:
+      - db:/data/db
+    networks:
+      - db-network
+
+volumes:
+  db:
+networks:
+  db-network:

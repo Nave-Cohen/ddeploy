@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 import "printer"
-
+import "deployed"
 # Load helper scripts
 down() {
     local folder=$1
@@ -13,7 +13,8 @@ down() {
     print_loading $! "Remove $conf from nginx container"
     docker exec nginx nginx -s reload &>/dev/null &
     print_loading $! "Reload nginx"
-    timeout 99999 docker compose -f "$folder/docker-compose.yml" down
+    timeout 99999 docker compose -f "$folder/docker-compose.yml" -f "$folder/mongo-compose.yml" -f "$folder/mysql-compose.yml" down
+    remove_deployed $NAME
 }
 
 if [ $# -gt 0 ]; then

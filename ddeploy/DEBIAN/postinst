@@ -26,9 +26,10 @@ generate_unique_password() {
 
 restore_conf() {
     conf_folder="/var/tmp/ddeploy/conf"
-    if [ ! -z "$(find "$conf_folder" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
+    if [ -d "$conf_folder" ] && [ ! -z "$(find "$conf_folder" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
         mv $conf_folder/* $base/configs
         rm -r $conf_folder
+        rm /var/tmp/ddeploy/conf
     fi
 }
 
@@ -71,18 +72,19 @@ update_service() {
     fi
 }
 
+
 if [ "$1" = "configure" ]; then
     echo "Configure new cronjobs ..."
     create_cronjobs
-    echo "Restore configuration files ..."
-    restore_conf
-    echo "Update existing ddeploy enviorment with new configuration"
-    update_conf
+    echo "debug output"
+    if [ -d "/var/tmp/ddeploy" ]; then
+        echo "Restore configuration files ..."
+        restore_conf
+        echo "Update existing ddeploy enviorment with new configuration"
+        update_conf
+    fi
     if [ ! -d /var/log/ddeploy ]; then
         mkdir /var/log/ddeploy
-    fi
-    if [ ! -f /etc/ddeploy/.hash ]; then
-        generate_unique_password
     fi
     update_service
 fi

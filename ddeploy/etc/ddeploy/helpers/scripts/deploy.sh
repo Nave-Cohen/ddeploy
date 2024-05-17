@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 import "printer"
+import "deployed"
 
 conf="$NAME.conf"
 template_conf="$conf.template"
@@ -15,6 +16,7 @@ exit_error() {
     command="$2"
     line="$3"
     echo -e "Abort Deploy:\n $command - [line $line | $status]"
+    
     $command_line "down" "$WORKDIR"
     exit 1
 }
@@ -35,7 +37,11 @@ create_nginx() {
 }
 
 # Run 'docker-compose' command to bring up containers in detached mode in the background
-docker compose -f "$WORKDIR/docker-compose.yml" up -d
+if [[ "$DATABASE" = "MYSQL" ]]; then
+    docker compose -f "$WORKDIR/mysql-compose.yml" -f "$WORKDIR/docker-compose.yml" up -d
+        else
+    docker compose -f "$WORKDIR/mongo-compose.yml" -f "$WORKDIR/docker-compose.yml" up -d
+fi
 
 exec 1> >(tee -a "$deploy_log")
 exec 2>>"$error_log"
@@ -47,6 +53,6 @@ create_nginx &
 print_loading $! "Copy $NAME.conf to nginx container"
 
 docker exec nginx nginx -s reload >>"$deploy_log" 2>&1
-
+write_deployed "$NAME"
 echo "Deploy ended successfully" >>$deploy_log
 print_title "End deploment" >>$deploy_log
