@@ -1,5 +1,0 @@
-tests/_shunit2
-.github/workflows/tests.yml
-.github/workflows/test.yml
-.github/workflows/build.yml
-.github/workflows/publish.yml
