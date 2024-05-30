@@ -18,7 +18,7 @@ jobs:
         run: |
           mv ./DEBIAN ./ddeploy
           sudo dpkg-deb --build ./ddeploy
-          rm ./ddeploy/DEBIAN
+          rm -rf ./ddeploy/DEBIAN
 
       - name: Create DEBIAN Artifact
         uses: actions/upload-artifact@v4
