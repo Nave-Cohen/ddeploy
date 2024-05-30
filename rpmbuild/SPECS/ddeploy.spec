@@ -16,7 +16,7 @@ BuildArch:      noarch
 A longer description of what ddeploy does.
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n %{name}
 
 %build
 # No build steps necessary for scripts
