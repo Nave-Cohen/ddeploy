@@ -35,13 +35,13 @@ jobs:
   
       - name: Build RPM Package
         run: |
-            rpmbuild -ba ~/rpmbuild/SPECS/ddeploy.spec
+            rpmbuild -ba ./rpmbuild/SPECS/ddeploy.spec
     
       - name: Create RPM Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ddeploy-rpm
-          path: ~/rpmbuild/RPMS/noarch/*.rpm
+          path: ./rpmbuild/RPMS/noarch/*.rpm
   test:
     runs-on: ubuntu-latest
     needs: build
