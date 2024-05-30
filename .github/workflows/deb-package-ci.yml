@@ -98,23 +98,29 @@ jobs:
       - name: Run tests for RPM package
         run: |
             sudo bash ./tests/run-rpm.sh
+  
+  
   publish:
     runs-on: ubuntu-latest
-    needs: test-debian
+    needs: [test-debian, test-rpm]
     steps:
-        - name: Checkout code and Download Artifact
-          uses: actions/checkout@v3
-        
-        - uses: actions/download-artifact@v4
-          with:
-            name: ddeploy
-        
-        - name: Commit and Push
-          run: |
-                git config user.email "github-actions@github.com"
-                git config user.name "github-actions"
-                git add ddeploy.deb
-                git commit -m "Add ddeploy.deb"
-                git push
-          env:
-            GH_PAT: ${{ secrets.GIT_TOKEN }}
+      - name: Checkout code and Download Artifacts
+        uses: actions/checkout@v3
+      
+      - uses: actions/download-artifact@v4
+        with:
+          name: ddeploy-deb
+      
+      - uses: actions/download-artifact@v4
+        with:
+          name: ddeploy-rpm
+      
+      - name: Commit and Push
+        run: |
+              git config user.email "github-actions@github.com"
+              git config user.name "github-actions"
+              git add ddeploy.deb ddeploy.rpm
+              git commit -m "Add ddeploy.deb and ddeploy.rpm"
+              git push
+        env:
+          GH_PAT: ${{ secrets.GIT_TOKEN }}
