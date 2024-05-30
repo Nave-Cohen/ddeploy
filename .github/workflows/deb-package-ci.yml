@@ -100,7 +100,7 @@ jobs:
             sudo bash ./tests/run-rpm.sh
   publish:
     runs-on: ubuntu-latest
-    needs: test
+    needs: test-debian
     steps:
         - name: Checkout code and Download Artifact
           uses: actions/checkout@v3
