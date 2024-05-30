@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -e
+
+remove_cron() {
+    crontab -l | grep -vF '/etc/ddeploy/maintence/rebuilder.sh' | crontab -
+    crontab -l | grep -vF '/etc/ddeploy/maintence/backup.sh' | crontab -
+}
+
+backup_old_conf() {
+    conf_folder="/var/tmp/ddeploy/conf"
+    if [[ ! -d "$conf_folder" ]]; then
+        mkdir -p $conf_folder
+    fi
+    if [ ! -z "$(find "/etc/ddeploy/configs" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
+        mv -f /etc/ddeploy/configs/* $conf_folder
+    fi
+}
+
+if [[ "$1" == "update" ]]; then
+    backup_old_conf
+fi
+
+if [[ "$1" == "remove" ]]; then
+    backup_old_conf
+    rm -r /etc/ddeploy/configs
+    echo "Remove cronjobs ..."
+    remove_cron
+fi
+if [[ "$1" == "purge" ]]; then
+    rm -r /etc/ddeploy/configs
+    echo "Remove cronjobs ..."
+    remove_cron
+fi

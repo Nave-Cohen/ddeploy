@@ -12,17 +12,36 @@ jobs:
       - name: Update package lists and Install dependencies
         run: |
          sudo apt-get update
-         sudo apt-get install -y build-essential dh-make
+         sudo apt-get install -y rpm build-essential dh-make
 
-      - name: Build Package
-        run: sudo dpkg-deb --build ./ddeploy
+      - name: Build Debian Package
+        run: |
+          mv ./DEBIAN ./ddeploy
+          sudo dpkg-deb --build ./ddeploy
+          rm ./ddeploy/DEBIAN
 
-      - name: Create Artifact
+      - name: Create DEBIAN Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ddeploy
+          name: ddeploy-deb
           path: ddeploy.deb
 
+
+      - name: Prepare RPM Package
+        run: |
+            echo '%_topdir %(pwd)/rpmbuild' > ~/.rpmmacros
+            tar -czvf ddeploy.tar.gz ./ddeploy
+            mv ddeploy.tar.gz ./rpmbuild/SOURCES/
+  
+      - name: Build RPM Package
+        run: |
+            rpmbuild -ba ~/rpmbuild/SPECS/ddeploy.spec
+    
+      - name: Create RPM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ddeploy-rpm
+          path: ~/rpmbuild/RPMS/noarch/*.rpm
   test:
     runs-on: ubuntu-latest
     needs: build
@@ -32,7 +51,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-            name: ddeploy
+            name: ddeploy-deb
 
       - name: Update package lists
         run: sudo apt-get update && sudo apt-get install -y systemd build-essential dh-make
@@ -53,6 +72,28 @@ jobs:
         run: |
             sudo bash ./tests/run.sh
 
+  test-rpm:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v4
+        with:
+            name: ddeploy-rpm
+
+      - name: Install dependencies for RPM testing
+        run: |
+            sudo yum install -y docker-ce docker-ce-cli containerd.io jq git cron
+
+      - name: Install package
+        run: |
+            sudo rpm -i ./ddeploy.rpm
+
+      - name: Run tests for RPM package
+        run: |
+            sudo bash ./tests/run-rpm.sh
   publish:
     runs-on: ubuntu-latest
     needs: test
