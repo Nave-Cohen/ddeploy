@@ -3,3 +3,6 @@ tests/_shunit2
 .github/workflows/test.yml
 .github/workflows/build.yml
 .github/workflows/publish.yml
+.github/workflows/test-rpm.yml
+docker-compose.yml
+Docker

@@ -29,7 +29,6 @@ restore_conf() {
     if [ -d "$conf_folder" ] && [ ! -z "$(find "$conf_folder" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
         mv $conf_folder/* $base/configs
         rm -r $conf_folder
-        rm /var/tmp/ddeploy/conf
     fi
 }
 
@@ -48,28 +47,22 @@ update_conf() {
 create_cronjobs() {
     # Define the cron job commands
     cronjob="* * * * * $base/maintence/rebuilder.sh"
-    cronjob2="0 0 * * * $base/maintence/cleaner.sh"
-
     # Add the cron job commands to the crontab
     (
         crontab -l
         echo "$cronjob"
-        echo "$cronjob2"
     ) | crontab -
 }
 
 
 
 update_service() {
-    # Compare the checksums
-    backup_path=/var/lib/ddeploy
-    service_path=/etc/systemd/system/ddeploy.service
-    if ! cmp -s $backup_path/ddeploy.service $service_path; then
-        echo -e "Updating systemd\nReload daemon"
-        systemctl daemon-reload
-        echo "Start ddeploy.service"
-        systemctl restart ddeploy
-    fi
+    echo -e "Updating systemd\nReload daemon"
+    systemctl daemon-reload
+    echo "Start ddeploy.service"
+    systemctl restart ddeploy
+    echo "Start ddeploy-cleaner.service"
+    systemctl restart ddeploy-cleaner.service
 }
 
 

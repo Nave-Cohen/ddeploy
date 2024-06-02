@@ -1,0 +1,11 @@
+[Unit]
+Description=Docker Compose Service
+After=network.target
+
+[Service]
+Restart=always
+ExecStart=/etc/ddeploy/maintence/cleaner.sh
+User=root
+
+[Install]
+WantedBy=multi-user.target

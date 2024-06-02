@@ -3,7 +3,6 @@ set -e
 
 remove_old_cron() {
     crontab -l | grep -vF '/etc/ddeploy/maintence/rebuilder.sh' | crontab -
-    crontab -l | grep -vF '/etc/ddeploy/maintence/cleaner.sh' | crontab -
 }
 
 backup_old_conf() {

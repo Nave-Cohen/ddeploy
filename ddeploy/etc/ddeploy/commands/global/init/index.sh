@@ -6,9 +6,6 @@ if isWorkdir $PWD; then
     exit 1
 fi
 
-#Run cleaner to clean deploment.json if there is entry
-$base/maintence/cleaner.sh
-
 # Check if the required arguments are provided
 if [ $# -lt 2 ]; then
     echo "[ERROR] - ddeploy init [github url] [branch name]"
