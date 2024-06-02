@@ -23,7 +23,7 @@ jobs:
       - name: Create DEBIAN source Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Debian-source
+          name: ddeploy-DEBIAN-source
           path: ddeploy-debian-source.tar.gz
 
       - name: Create DEBIAN Package Artifact
@@ -59,7 +59,7 @@ jobs:
       - name: Create RPM Source Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ddeploy-rpm-source
+          name: ddeploy-RPM-source
           path: ddeploy-rpm-source.tar.gz
 
       - name: Build RPM Package
@@ -110,9 +110,13 @@ jobs:
         uses: actions/checkout@v3
 
       - uses: actions/download-artifact@v4
+      - name: ls
+        run: |
+          ls -R
 
       - name: Release with Notes
         uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             ddeploy-debian-source.tar.gz
