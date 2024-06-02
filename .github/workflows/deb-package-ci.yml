@@ -119,10 +119,10 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            ddeploy-debian-source.tar.gz
-            ddeploy-rpm-source.tar.gz
-            rpmbuild/RPMS/noarch/*.rpm
-            ddeploy.deb
+            ddeploy-DEBIAN-source/ddeploy-debian-source.tar.gz
+            ddeploy-RPM-source/ddeploy-rpm-source.tar.gz
+            ddeploy-rpm/*.rpm
+            ddeploy-deb/ddeploy.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
 
