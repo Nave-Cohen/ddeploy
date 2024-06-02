@@ -39,7 +39,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Update package lists and Install dependencies
         run: |
          sudo apt-get update
@@ -50,6 +50,9 @@ jobs:
           echo '%_topdir %(pwd)/rpmbuild' > ~/.rpmmacros
           tar -czvf ddeploy.tar.gz ./ddeploy
           mv ddeploy.tar.gz ./rpmbuild/SOURCES/
+          mkdir ./rpmbuild/BUILDROOT
+          mkdir ./rpmbuild/BUILD
+          mkdir ./rpmbuild/RPMS
           tar -czvf ddeploy-rpm-source.tar.gz ./rpmbuild
 
 
