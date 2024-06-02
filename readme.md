@@ -34,7 +34,7 @@ chmod +x docker-install.sh
 sudo yum install jq git cron
 
 # Install ddeploy package
-sudo rpm -i ./ddeploy.deb
+sudo rpm -i ./ddeploy.rpm
 ```
 
 ## create new project
