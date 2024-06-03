@@ -1,22 +1,40 @@
 
 
-## Clone project & Install Dependencies
+## Debian installation
 
-```sh
-# Clone the ddeploy project
-git clone https://github.com/Nave-Cohen/ddeploy.git
-cd ddeploy
+``` sh
+# Download package
+curl -L https://github.com/Nave-Cohen/ddeploy/releases/download/v1.0.0/ddeploy.deb > ddeploy.deb
 
-# Make the Docker installation script executable and run it
+# Optional: Make the Docker installation script executable and run it
 chmod +x docker-install.sh
 ./docker-install.sh
 
-# Install the ddeploy package and resolve dependencies
-dpkg -i ddeploy.deb
-apt install -f
+# Install deps
+sudo apt install jq git cron
 
-# Start the ddeploy service
-systemctl start ddeploy
+# Install ddeploy package
+dpkg -i ./ddeploy.deb
+# or
+apt install ./ddeploy.deb
+
+```
+
+## RHL installation
+
+``` sh
+# Download package
+curl -L https://github.com/Nave-Cohen/ddeploy/releases/download/v1.0.0/ddeploy-1.0.0-1.noarch.rpm > ddeploy.rpm
+
+# Optional: Make the Docker installation script executable and run it
+chmod +x docker-install.sh
+./docker-install.sh
+
+# Install deps
+sudo yum install jq git cron
+
+# Install ddeploy package
+sudo rpm -i ./ddeploy.rpm
 ```
 
 ## create new project
@@ -53,9 +71,7 @@ ddeploy help [command]
 
 ### roadmap
 
-- MongoDB Integration (Next Update)
-- MongoDB support will be added in the next update.
-- Stay tuned for more information and instructions on incorporating MongoDB into your projects.
+- add build from source info to README
 
 <p align="center">
   <a href="https://www.docker.com/">
