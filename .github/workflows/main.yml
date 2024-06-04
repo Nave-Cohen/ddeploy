@@ -5,11 +5,17 @@ on:
       - 'v*'
 
 jobs:
-
   build_packages:
-    uses: ./.github/workflows/build-packages.yml
-    with:
-      VERSION: ${{ github.ref_name }}
+    runs-on: ubuntu
+    steps:
+      - uses: little-core-labs/get-git-tag@v3.0.1
+        id: version
+        with:
+          tagRegex: "v(.*)" 
+          tagRegexGroup: 1
+      - uses: ./.github/workflows/build-packages.yml
+        with:
+          VERSION: ${{ needs.version.outputs.tag }}
 
   test_packages:
     needs: build_packages
