@@ -11,7 +11,7 @@ jobs:
   build_packages:
     uses: ./.github/workflows/build-packages.yml
     with:
-      VERSION: ${{ github.ref_name }}
+      VERSION: ${GITHUB_REF#refs/*/}
 
   test_packages:
     needs: build_packages
