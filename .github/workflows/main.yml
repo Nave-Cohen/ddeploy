@@ -1,8 +1,6 @@
 name: Release
 on:
   push:
-    branches:
-      - releases/*
     tags:
       - 'v*'
 
@@ -11,7 +9,7 @@ jobs:
   build_packages:
     uses: ./.github/workflows/build-packages.yml
     with:
-      VERSION: ${GITHUB_REF#refs/*/}
+      VERSION: ${{ github.ref_name }}
 
   test_packages:
     needs: build_packages
