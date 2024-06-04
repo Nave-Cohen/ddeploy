@@ -16,9 +16,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set default version if not provided
-        run: echo "VERSION=${VERSION:-0}" >> $GITHUB_ENV
-
       - name: Prepare Debian package
         run: |
           mv ./DEBIAN ./ddeploy
@@ -51,9 +48,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y rpm build-essential dh-make
-
-      - name: Set default version if not provided
-        run: echo "VERSION=${VERSION:-0}" >> $GITHUB_ENV
 
       - name: Prepare RPM Package
         run: |
