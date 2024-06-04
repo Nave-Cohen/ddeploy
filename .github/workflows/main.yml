@@ -15,7 +15,7 @@ jobs:
           tagRegexGroup: 1
       - uses: ./.github/workflows/build-packages.yml
         with:
-          VERSION: ${{ needs.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.tag }}
 
   test_packages:
     needs: build_packages
