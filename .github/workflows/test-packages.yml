@@ -1,0 +1,35 @@
+name: Test Packages
+
+on:
+  workflow_call:
+
+jobs:
+  test_debian:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download DEBIAN Package Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ddeploy-deb
+          path: ./packages
+
+      - name: Update package lists and Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y systemd build-essential dh-make
+
+      - name: Install Docker and dependencies
+        run: |
+          sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+          sudo apt-get update
+          sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker jq git cron
+
+      - name: Install package
+        run: sudo dpkg -i ./packages/*.deb
+
+      - name: Run tests
+        run: sudo bash ./tests/run.sh
