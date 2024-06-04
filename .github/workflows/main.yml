@@ -5,9 +5,6 @@ on:
       - releases/*
     tags:
       - 'v*'
-  pull_request:
-    branches:
-      - main
 
 jobs:
 
@@ -23,4 +20,3 @@ jobs:
   publish_release:
     needs: test_packages
     uses: ./.github/workflows/publish-release.yml
-    if: startsWith(github.ref, 'refs/tags/')
