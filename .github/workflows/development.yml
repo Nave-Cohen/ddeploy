@@ -2,7 +2,8 @@ name: Build, Test Deb & RPM Package
 
 on:
   push:
-
+    branches:
+      - '**'
 jobs:
 
   build_packages:
