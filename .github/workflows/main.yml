@@ -14,13 +14,13 @@ jobs:
         id: version
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
   build_packages:
     needs: get_version
     uses: ./.github/workflows/build-packages.yml
     with:
-      VERSION: ${{ needs.get_version.outputs.version }}
+      version: ${{ needs.get_version.outputs.version }}
 
   test_packages:
     needs: build_packages

@@ -3,7 +3,7 @@ name: Build Packages
 on:
   workflow_call:
     inputs:
-      VERSION:
+      version:
         required: false
         default: "0"
         type: string
@@ -19,22 +19,22 @@ jobs:
       - name: Prepare Debian package
         run: |
           mv ./DEBIAN ./ddeploy
-          sed -i "s/\$VERSION/${{ inputs.VERSION }}/" ./ddeploy/DEBIAN/control
+          sed -i "s/\$VERSION/${{ inputs.version }}/" ./ddeploy/DEBIAN/control
           sudo dpkg-deb --build ./ddeploy
-          mv ddeploy.deb ddeploy_${{ inputs.VERSION }}-1_all.deb
-          tar -czvf ddeploy-debian-${{ inputs.VERSION }}.tar.gz ddeploy_${{ inputs.VERSION }}-1_all.deb
+          mv ddeploy.deb ddeploy_${{ inputs.version }}-1_all.deb
+          tar -czvf ddeploy-debian-${{ inputs.version }}.tar.gz ddeploy_${{ inputs.version }}-1_all.deb
 
       - name: Create DEBIAN source Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ddeploy-DEBIAN-source
-          path: ddeploy-debian-${{ inputs.VERSION }}.tar.gz
+          path: ddeploy-debian-${{ inputs.version }}.tar.gz
 
       - name: Create DEBIAN Package Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ddeploy-deb
-          path: ddeploy_${{ inputs.VERSION }}-1_all.deb
+          path: ddeploy_${{ inputs.version }}-1_all.deb
 
 
   build_rpm:
@@ -51,18 +51,18 @@ jobs:
 
       - name: Prepare RPM Package
         run: |
-          sed -i "s/\$VERSION/${{ inputs.VERSION }}/" ./rpmbuild/SPECS/ddeploy.spec
+          sed -i "s/\$VERSION/${{ inputs.version }}/" ./rpmbuild/SPECS/ddeploy.spec
           echo '%_topdir %(pwd)/rpmbuild' > ~/.rpmmacros
           tar -czvf ddeploy.tar.gz ./ddeploy
           mv ddeploy.tar.gz ./rpmbuild/SOURCES/
           mkdir -p ./rpmbuild/{BUILDROOT,BUILD,RPMS}
-          tar -czvf ddeploy-rpm-${{ inputs.VERSION }}.tar.gz ./rpmbuild
+          tar -czvf ddeploy-rpm-${{ inputs.version }}.tar.gz ./rpmbuild
 
       - name: Create RPM Source Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ddeploy-RPM-source
-          path: ddeploy-rpm-${{ inputs.VERSION }}.tar.gz
+          path: ddeploy-rpm-${{ inputs.version }}.tar.gz
 
       - name: Build RPM Package
         run: |
