@@ -83,14 +83,11 @@ ddeploy help [command]
 </p>
 
 <div align="center" style="text-align: center;">
-  <a href="https://github.com/Nave-Cohen/ddeploy/actions/workflows/deb-package-ci.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/Nave-Cohen/ddeploy/deb-package-ci.yml?branch=main&label=Build%20debian%20package&job=build" alt="Build debian package">
+  <a href="https://github.com/Nave-Cohen/ddeploy/actions/workflows/development.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/Nave-Cohen/ddeploy/development.yml?branch=main&label=Build%20debian%20package&job=build_packages" alt="Build debian package">
   </a>
-  <a href="https://github.com/Nave-Cohen/ddeploy/actions/workflows/deb-package-ci.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/Nave-Cohen/ddeploy/deb-package-ci.yml?branch=main&label=Test%20package&job=test" alt="Test package">
-  </a>
-  <a href="https://github.com/Nave-Cohen/ddeploy/actions/workflows/deb-package-ci.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/Nave-Cohen/ddeploy/deb-package-ci.yml?branch=main&label=Publish%20debian%20package&job=publish" alt="Publish debian package">
+  <a href="https://github.com/Nave-Cohen/ddeploy/actions/workflows/development.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/Nave-Cohen/ddeploy/development.yml?branch=main&label=Test%20package&job=test_packages" alt="Test package">
   </a>
 </div>
 
