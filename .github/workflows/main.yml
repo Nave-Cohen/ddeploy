@@ -1,0 +1,22 @@
+name: Release
+on:
+  push:
+    branches:
+      - releases/*
+    tags:
+      - 'v*'
+
+jobs:
+
+  build_packages:
+    uses: ./.github/workflows/build-packages.yml
+    with:
+      VERSION: ${{ github.ref_name }}
+
+  test_packages:
+    needs: build_packages
+    uses: ./.github/workflows/test-packages.yml
+
+  publish_release:
+    needs: test_packages
+    uses: ./.github/workflows/publish-release.yml
