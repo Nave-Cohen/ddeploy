@@ -25,13 +25,13 @@ jobs:
           tar -czvf ddeploy-debian-${{ inputs.version }}.tar.gz ddeploy_${{ inputs.version }}-1_all.deb
 
       - name: Create DEBIAN source Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: ddeploy-DEBIAN-source
           path: ddeploy-debian-${{ inputs.version }}.tar.gz
 
       - name: Create DEBIAN Package Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: ddeploy-deb
           path: ddeploy_${{ inputs.version }}-1_all.deb
@@ -59,7 +59,7 @@ jobs:
           tar -czvf ddeploy-rpm-${{ inputs.version }}.tar.gz ./rpmbuild
 
       - name: Create RPM Source Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: ddeploy-RPM-source
           path: ddeploy-rpm-${{ inputs.version }}.tar.gz
@@ -69,7 +69,7 @@ jobs:
           rpmbuild -ba ./rpmbuild/SPECS/ddeploy.spec
 
       - name: Create RPM Package Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: ddeploy-rpm
           path: rpmbuild/RPMS/noarch/*.rpm
