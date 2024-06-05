@@ -13,22 +13,13 @@ backup_old_conf() {
         mkdir $conf_folder
     fi
     if [ ! -z "$(find "$conf_path" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
-        mv -f $conf_path/* $conf_folder
+        cp -f $conf_path/* $conf_folder
     fi
 }
 
-copy_service(){
-    backup_path=/var/lib/ddeploy
-    service_path=/etc/systemd/system/ddeploy.service
-    mkdir -p $backup_path
-    cp  $service_path $backup_path/ddeploy.service
-}
-
-if [[ "$1" == "upgrade" ]]; then
+if  [ "$1" == "2" ] ; then
     echo "Remove old cronjobs ..."
     remove_old_cron
     echo "Backup configuration files ..."
     backup_old_conf
-    echo "Check systemd configuration"
-    copy_service
 fi

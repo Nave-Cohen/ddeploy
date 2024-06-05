@@ -18,9 +18,6 @@ A longer description of what ddeploy does.
 %prep
 %setup -q -n %{name}
 
-%build
-# No build steps necessary for scripts
-
 %install
 rm -rf %{buildroot}
 
@@ -40,21 +37,31 @@ cp -r etc/systemd/system/* %{buildroot}/etc/systemd/system/
 mkdir -p %{buildroot}/usr/local/bin
 cp -r usr/local/bin/* %{buildroot}/usr/local/bin/
 
+# Copy scripts to /usr/local/share/ddeploy
+mkdir -p %{buildroot}/usr/local/share/ddeploy
+cp %{SOURCE1} %{buildroot}/usr/local/share/ddeploy/
+cp %{SOURCE2} %{buildroot}/usr/local/share/ddeploy/
+cp %{SOURCE3} %{buildroot}/usr/local/share/ddeploy/
+chmod +x %{buildroot}/usr/local/share/ddeploy/preinst
+chmod +x %{buildroot}/usr/local/share/ddeploy/postinst
+chmod +x %{buildroot}/usr/local/share/ddeploy/prerm
+
 %pre
-%{expand:%%(cat %{SOURCE1})}
+%{SOURCE1} "$1"
 
 %post
-%{expand:%%(cat %{SOURCE2})}
+/usr/local/share/ddeploy/postinst "$1"
 
 %preun
-%{expand:%%(cat %{SOURCE3})}
+%{SOURCE3} "$1"
 
 %files
 /etc/ddeploy
 /etc/logrotate.d/ddeploy
 /etc/systemd/system/ddeploy-cleaner.service
 /etc/systemd/system/ddeploy.service
-/usr/local/bin
+/usr/local/bin/
+/usr/local/share/ddeploy
 
 %changelog
 * Fri May 30 2024 Nave Cohen <nave1616@hotmail.com> - 1.0.0-1
