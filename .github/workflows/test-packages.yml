@@ -35,7 +35,7 @@ jobs:
         run: sudo bash ./tests/run.sh
 
   test_centos:
-    runs-on: self-hosted[centos]
+    runs-on: self-hosted
 
     steps:
       - name: Checkout repository
@@ -52,7 +52,7 @@ jobs:
 
       - name: Run tests
         run: sudo bash ./tests/run.sh
-        
+
       - name: Remove package
         run: sudo rpm -e ddeploy
     
