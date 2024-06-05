@@ -47,13 +47,13 @@ chmod +x %{buildroot}/usr/local/share/ddeploy/postinst
 chmod +x %{buildroot}/usr/local/share/ddeploy/prerm
 
 %pre
-%{SOURCE1} "$1"
+/usr/local/share/ddeploy/preinst "$1"
 
 %post
 /usr/local/share/ddeploy/postinst "$1"
 
 %preun
-%{SOURCE3} "$1"
+/usr/local/share/ddeploy/prerm "$1"
 
 %files
 /etc/ddeploy
