@@ -12,22 +12,16 @@ backup_old_conf() {
         mkdir -p $conf_folder
     fi
     if [ ! -z "$(find "/etc/ddeploy/configs" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
-        mv -f /etc/ddeploy/configs/* $conf_folder
+        cp -f /etc/ddeploy/configs/* $conf_folder
     fi
 }
 
-if [[ "$1" == "update" ]]; then
+if [ "$1" == "0" ]; then
+    # Package removal
     backup_old_conf
-fi
-
-if [[ "$1" == "remove" ]]; then
+    echo "Removing cronjobs ..."
+    remove_cron
+elif [ "$1" == "1" ]; then
+    # Package upgrade
     backup_old_conf
-    rm -r /etc/ddeploy/configs
-    echo "Remove cronjobs ..."
-    remove_cron
-fi
-if [[ "$1" == "purge" ]]; then
-    rm -r /etc/ddeploy/configs
-    echo "Remove cronjobs ..."
-    remove_cron
 fi

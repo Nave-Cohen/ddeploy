@@ -33,7 +33,8 @@ chmod +x docker-install.sh
 ./docker-install.sh
 
 # Install deps
-sudo yum install jq git cron
+sudo yum install epel-release -y
+sudo yum -y install jq git cron
 
 # Install ddeploy package
 sudo rpm -i ./ddeploy.rpm

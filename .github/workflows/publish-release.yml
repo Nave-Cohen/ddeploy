@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Download DEBIAN and RPM Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           path: ./artifacts
 

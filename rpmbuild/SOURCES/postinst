@@ -1,36 +1,20 @@
 #!/usr/bin/env bash
-
 set -e
 base="/etc/ddeploy"
-# Function to generate a unique password for the host machine
-generate_unique_password() {
-    # Function to generate a random string
-    generate_random_string() {
-        cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w "${1:-32}" | head -n 1
-    }
-
-    # Get the hostname of the machine
-    hostname=$(hostname)
-
-    # Get the current timestamp (number of seconds since the epoch)
-    timestamp=$(date +%s)
-
-    # Generate a random string
-    random_string=$(generate_random_string 12)
-
-    # Combine the components to create the unique password
-    hash="${hostname}-${timestamp}-${random_string}"
-
-    echo "$hash" >/etc/ddeploy/.hash
-}
 
 restore_conf() {
     conf_folder="/var/tmp/ddeploy/conf"
+
+    if [ ! -d "$conf_folder" ]; then
+        return
+    fi
+
     if [ -d "$conf_folder" ] && [ ! -z "$(find "$conf_folder" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
-        mv $conf_folder/* $base/configs
-        rm -r $conf_folder
+        mv "$conf_folder"/* "$base/configs"
+        rm -r "$conf_folder"
     fi
 }
+
 
 update_conf() {
     json_data="$base/configs/deploys.json"
@@ -55,8 +39,16 @@ create_cronjobs() {
 }
 
 
+enable_services(){
+    echo -e "Updating systemd\nReload daemon"
+    systemctl daemon-reload
+    echo "enable ddeploy service"
+    systemctl enable ddeploy
+    echo "enable ddeploy-cleaner service"
+    systemctl enable ddeploy-cleaner
 
-update_service() {
+}
+start_services() {
     echo -e "Updating systemd\nReload daemon"
     systemctl daemon-reload
     echo "Start ddeploy.service"
@@ -65,19 +57,19 @@ update_service() {
     systemctl restart ddeploy-cleaner.service
 }
 
-
-if [ "$1" = "configure" ]; then
+# Install
+if  [ "$1" == "1" ] ; then
     echo "Configure new cronjobs ..."
     create_cronjobs
-    echo "debug output"
-    if [ -d "/var/tmp/ddeploy" ]; then
-        echo "Restore configuration files ..."
-        restore_conf
-        echo "Update existing ddeploy enviorment with new configuration"
-        update_conf
-    fi
-    if [ ! -d /var/log/ddeploy ]; then
-        mkdir /var/log/ddeploy
-    fi
-    update_service
+    mkdir -p /var/log/ddeploy
+    enable_services
+    start_services
+fi
+# Upgrade
+if  [ "$1" == "2" ] ; then
+    echo "Restore configuration files ..."
+    restore_conf
+    echo "Update existing ddeploy enviorment with new configuration"
+    update_conf
+    start_services
 fi
