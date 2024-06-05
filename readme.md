@@ -7,6 +7,7 @@
 curl -L https://github.com/Nave-Cohen/ddeploy/releases/download/v1.0.0/ddeploy.deb > ddeploy.deb
 
 # Optional: Make the Docker installation script executable and run it
+curl -L https://raw.githubusercontent.com/Nave-Cohen/ddeploy/main/docker-install.sh > docker-install.sh
 chmod +x docker-install.sh
 ./docker-install.sh
 
@@ -27,6 +28,7 @@ apt install ./ddeploy.deb
 curl -L https://github.com/Nave-Cohen/ddeploy/releases/download/v1.0.0/ddeploy-1.0.0-1.noarch.rpm > ddeploy.rpm
 
 # Optional: Make the Docker installation script executable and run it
+curl -L https://raw.githubusercontent.com/Nave-Cohen/ddeploy/main/docker-install.sh > docker-install.sh
 chmod +x docker-install.sh
 ./docker-install.sh
 
