@@ -6,3 +6,4 @@ tests/_shunit2
 .github/workflows/test-rpm.yml
 docker-compose.yml
 Docker
+Dockerfile
