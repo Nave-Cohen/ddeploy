@@ -33,3 +33,26 @@ jobs:
 
       - name: Run tests
         run: sudo bash ./tests/run.sh
+
+  test_centos:
+    runs-on: self-hosted[centos]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download DEBIAN Package Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ddeploy-rpm
+          path: ./packages
+
+      - name: Install package
+        run: sudo rpm -i ./packages/*.rpm
+
+      - name: Run tests
+        run: sudo bash ./tests/run.sh
+        
+      - name: Remove package
+        run: sudo rpm -e ddeploy
+    
