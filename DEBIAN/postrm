@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+
+docker kill $(docker ps | grep nginx | cut -d ' ' -f 1) &> /dev/null

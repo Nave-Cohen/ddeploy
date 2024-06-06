@@ -101,6 +101,10 @@ elif [ "$1" == "1" ]; then
     backup_old_conf
 fi
 
+%postun
+docker kill $(docker ps | grep nginx | cut -d ' ' -f 1) &> /dev/null
+
+
 %files
 /etc/ddeploy
 /etc/logrotate.d/ddeploy
