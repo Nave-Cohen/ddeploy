@@ -8,3 +8,4 @@ docker-compose.yml
 Docker
 Dockerfile
 ddeploy.deb
+act.secrets
