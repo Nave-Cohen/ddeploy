@@ -1,5 +1,5 @@
 Name:           ddeploy
-Version:        1.0.0
+Version:        $VERSION
 Release:        1%{?dist}
 Summary:        Description of ddeploy
 
