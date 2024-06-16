@@ -20,7 +20,7 @@ jobs:
         run: |
           mv ./DEBIAN ./ddeploy
           sed -i "s/\$VERSION/${{ inputs.version }}/" ./ddeploy/DEBIAN/control
-          sudo dpkg-deb --build --root-owner-group --compression=gzip ./ddeploy ddeploy_${{ inputs.version }}-1_all.deb
+          sudo dpkg-deb -Zgzip --build --root-owner-group ./ddeploy ddeploy_${{ inputs.version }}-1_all.deb
           tar -czvf ddeploy-debian-${{ inputs.version }}.tar.gz ./ddeploy
 
       - name: Create DEBIAN source Artifact
