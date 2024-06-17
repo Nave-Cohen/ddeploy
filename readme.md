@@ -3,41 +3,38 @@
 ## Debian installation
 
 ``` sh
-# Download package
-curl -L https://github.com/Nave-Cohen/ddeploy/releases/download/v1.0.0/ddeploy.deb > ddeploy.deb
+# import the GPG Key
+sudo curl -fsSL https://ddeploy.org/packages/debian/ddeploy-pubkey.asc | sudo tee /etc/apt/keyrings/ddeploy-pubkey.asc
+
+# Add the ddeploy Repository
+echo "deb [arch=$(dpkg --print-architecture) sign-by=/etc/apt/keyrings/ddeploy-pubkey.asc] https://ddeploy.org/packages/debian stable main" | sudo tee /etc/apt/sources.list.d/ddeploy.list
 
 # Optional: Make the Docker installation script executable and run it
 curl -L https://raw.githubusercontent.com/Nave-Cohen/ddeploy/main/docker-install.sh > docker-install.sh
 chmod +x docker-install.sh
 ./docker-install.sh
 
-# Install deps
-sudo apt install jq git cron
-
-# Install ddeploy package
-dpkg -i ./ddeploy.deb
-# or
-apt install ./ddeploy.deb
-
+# Update Package Lists and Install ddeploy
+sudo apt update
+sudo apt install -y ddeploy
 ```
 
 ## RHL installation
 
 ``` sh
-# Download package
-curl -L https://github.com/Nave-Cohen/ddeploy/releases/download/v1.0.0/ddeploy-1.0.0-1.noarch.rpm > ddeploy.rpm
+# Add the ddeploy Repository
+sudo yum-config-manager --add-repo http://ddeploy.org/rpm/ddeploy.repo
 
 # Optional: Make the Docker installation script executable and run it
 curl -L https://raw.githubusercontent.com/Nave-Cohen/ddeploy/main/docker-install.sh > docker-install.sh
 chmod +x docker-install.sh
-./docker-install.sh
+./docker-inst all.sh
 
-# Install deps
-sudo yum install epel-release -y
-sudo yum -y install jq git cron
+#Import the GPG Key
+sudo rpm --import http://ddeploy.org/packages/rpm/ddeploy.gpg.key
 
-# Install ddeploy package
-sudo rpm -i ./ddeploy.rpm
+#  Install ddeploy
+sudo yum install ddeploy
 ```
 
 ## create new project
@@ -63,7 +60,6 @@ ddeploy status # Get deployment status
 ```
 
 ##### for more information & command
-
 ```sh
 # Get general help for ddeploy
 ddeploy help
