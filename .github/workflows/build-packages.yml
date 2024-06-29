@@ -35,7 +35,6 @@ jobs:
           name: ddeploy-deb
           path: ddeploy_${{ inputs.version }}-1_all.deb
 
-
   build_rpm:
     runs-on: ubuntu-latest
 
