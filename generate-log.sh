@@ -37,6 +37,7 @@ function generate_section() {
 generate_section "fix" "bugfix" "bug" "🐛 Bug Fixes"
 generate_section "feat" "feature" "🚀 New Features"
 generate_section "chore" "maintain" "🛠 Maintenance"
+generate_section "cmd" "commands" "💻 Commands"
 
 echo "CHANGELOG.md has been generated with the specified log entries."
 
