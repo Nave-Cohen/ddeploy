@@ -1,9 +1,9 @@
 Name:           ddeploy
 Version:        $VERSION
 Release:        1%{?dist}
-Summary:        Description of ddeploy
+Summary:        Automation tool for backend deployment and managment.
 
-License:        Your License
+License:        MIT
 URL:            https://github.com/Nave-Cohen/ddeploy
 Source0:        %{name}.tar.gz
 Source1:        preinst
@@ -21,34 +21,40 @@ A longer description of what ddeploy does.
 %install
 rm -rf %{buildroot}
 
-# Copy ddeploy directory
-mkdir -p %{buildroot}/etc/ddeploy
-cp -r etc/ddeploy/* %{buildroot}/etc/ddeploy/
+# Define variables for paths
+%global etc_ddeploy %{buildroot}/etc/ddeploy
+%global etc_logrotate %{buildroot}/etc/logrotate.d
+%global etc_systemd %{buildroot}/etc/systemd/system
+%global usr_bin %{buildroot}/usr/local/bin
+%global usr_share %{buildroot}/usr/local/share/ddeploy
 
-# Copy logrotate configuration
-mkdir -p %{buildroot}/etc/logrotate.d
-cp -r etc/logrotate.d/* %{buildroot}/etc/logrotate.d/
+# Create directories and copy files
+mkdir -p %{etc_ddeploy}
+cp -r etc/ddeploy/* %{etc_ddeploy}/
 
-# Copy systemd services
-mkdir -p %{buildroot}/etc/systemd/system
-cp -r etc/systemd/system/* %{buildroot}/etc/systemd/system/
+mkdir -p %{etc_logrotate}
+cp -r etc/logrotate.d/* %{etc_logrotate}/
 
-# Copy ddeploy main executable
-mkdir -p %{buildroot}/usr/local/bin
-cp -r usr/local/bin/* %{buildroot}/usr/local/bin/
+mkdir -p %{etc_systemd}
+cp -r etc/systemd/system/* %{etc_systemd}/
 
-# Copy scripts to /usr/local/share/ddeploy
-mkdir -p %{buildroot}/usr/local/share/ddeploy
-cp %{SOURCE1} %{buildroot}/usr/local/share/ddeploy/
-cp %{SOURCE2} %{buildroot}/usr/local/share/ddeploy/
-cp %{SOURCE3} %{buildroot}/usr/local/share/ddeploy/
-chmod +x %{buildroot}/usr/local/share/ddeploy/preinst
-chmod +x %{buildroot}/usr/local/share/ddeploy/postinst
-chmod +x %{buildroot}/usr/local/share/ddeploy/prerm
+mkdir -p %{usr_bin}
+cp -r usr/local/bin/* %{usr_bin}/
+
+mkdir -p %{usr_share}
+cp %{SOURCE1} %{usr_share}/
+cp %{SOURCE2} %{usr_share}/
+cp %{SOURCE3} %{usr_share}/
+
+# Make scripts executable
+chmod +x %{usr_share}/preinst
+chmod +x %{usr_share}/postinst
+chmod +x %{usr_share}/prerm
 
 %pre
 set -e
 
+# Functions for pre-installation tasks
 remove_old_cron() {
     crontab -l | grep -vF '/etc/ddeploy/maintence/rebuilder.sh' | crontab -
 }
@@ -57,15 +63,11 @@ backup_old_conf() {
     conf_path="/etc/ddeploy/configs"
     conf_folder="/var/tmp/ddeploy/conf"
     rm -f $conf_path/variables.env
-    if [[ ! -d "$conf_folder" ]]; then
-        mkdir $conf_folder
-    fi
-    if [ ! -z "$(find "$conf_path" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
-        cp -f $conf_path/* $conf_folder
-    fi
+    [ ! -d "$conf_folder" ] && mkdir $conf_folder
+    [ -n "$(find "$conf_path" -mindepth 1 -maxdepth 1 -print -quit)" ] && cp -f $conf_path/* $conf_folder
 }
 
-if  [ "$1" == "2" ] ; then
+if [ "$1" == "2" ]; then
     echo "Remove old cronjobs ..."
     remove_old_cron
     echo "Backup configuration files ..."
@@ -76,6 +78,7 @@ fi
 /usr/local/share/ddeploy/postinst "$1"
 
 %preun
+# Functions for pre-uninstallation tasks
 remove_cron() {
     crontab -l | grep -vF '/etc/ddeploy/maintence/rebuilder.sh' | crontab -
     crontab -l | grep -vF '/etc/ddeploy/maintence/backup.sh' | crontab -
@@ -83,14 +86,12 @@ remove_cron() {
 
 backup_old_conf() {
     conf_folder="/var/tmp/ddeploy/conf"
-    if [[ ! -d "$conf_folder" ]]; then
-        mkdir -p $conf_folder
-    fi
-    if [ ! -z "$(find "/etc/ddeploy/configs" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
-        cp -f /etc/ddeploy/configs/* $conf_folder
-    fi
+    [ ! -d "$conf_folder" ] && mkdir -p $conf_folder
+    [ -n "$(find "/etc/ddeploy/configs" -mindepth 1 -maxdepth 1 -print -quit)" ] && cp -f /etc/ddeploy/configs/* $conf_folder
 }
 
+# Stop service on uninstallation
+systemctl stop ddeploy
 if [ "$1" == "0" ]; then
     # Package removal
     backup_old_conf
@@ -100,9 +101,6 @@ elif [ "$1" == "1" ]; then
     # Package upgrade
     backup_old_conf
 fi
-
-%postun
-docker kill $(docker ps | grep nginx | cut -d ' ' -f 1) &> /dev/null
 
 
 %files
@@ -114,5 +112,6 @@ docker kill $(docker ps | grep nginx | cut -d ' ' -f 1) &> /dev/null
 /usr/local/share/ddeploy
 
 %changelog
-* Fri May 30 2024 Nave Cohen <nave1616@hotmail.com> - 1.0.0-1
-- Initial package
+* Fri May 30 2024 Nave Cohen <nave1616@hotmail.com> - $VERSION-1
+- preun: stop service before uninstallation.
+- reformat spec file.

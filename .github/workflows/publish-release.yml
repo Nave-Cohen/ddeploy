@@ -2,7 +2,11 @@ name: Publish Release
 
 on:
   workflow_call:
-    
+    inputs:
+      version:
+        required: false
+        default: "0"
+        type: string
 jobs:
   publish_release:
     runs-on: ubuntu-latest
@@ -15,14 +19,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           path: ./artifacts
-          
-      - name: Release Drafter
-        id: release_drafter
-        uses: release-drafter/release-drafter@v5
-        with:
-          config-name: .github/release-drafter.yml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
+      - name: Generate changelog
+        id: generate_changelog
+        run: ./generate-log.sh "${{ inputs.version }}"
 
       - name: Release with Notes
         uses: softprops/action-gh-release@v1
@@ -31,10 +31,17 @@ jobs:
         with:
           files: |
             artifacts/*/*.*
-          tag_name: ${{ steps.release_drafter.outputs.tag_name }}
-          name: ${{ steps.release_drafter.outputs.name }}
-          body: ${{ steps.release_drafter.outputs.body }}
+          body: ${{ steps.generate_changelog.outputs.changelog }}
           draft: false
           prerelease: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update changelog
+        run: |
+          echo "${{ steps.generate_changelog.outputs.changelog }}" >> CHANGELOG.md
+          git add CHANGELOG.md
+          git commit -m "Update changelog"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
