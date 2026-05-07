@@ -21,17 +21,6 @@ if [[ $1 == "off" ]]; then
     exit 0
 fi
 
-if [[ $1 == "list" ]]; then
-    file_list="$base/configs/rebuild.lst"
-
-    while IFS= read -r line; do
-        folder=$(basename "$line")
-        echo "$folder"
-    done <"$file_list"
-
-    exit 0
-fi
-
 if [[ $# -lt 1 ]]; then
     export COMMIT=$(fetchCommit "$WORKDIR")
     $scripts/deploy.sh

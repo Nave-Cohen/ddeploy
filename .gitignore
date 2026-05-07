@@ -9,3 +9,5 @@ Docker
 Dockerfile
 ddeploy.deb
 act.secrets
+act.env
+version.txt
